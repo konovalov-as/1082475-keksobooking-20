@@ -50,8 +50,8 @@ var getPathPhotos = function (randomNumber) {
 };
 
 var similarAds = []; // массив похожих объявлений
-var mapBlock = document.querySelector('.map__pins'); // место для вставки меток объявлений
-var mapWidth = mapBlock.offsetWidth; // получаем ширину карты
+var mapPins = document.querySelector('.map__pins'); // место для вставки меток объявлений
+var mapWidth = mapPins.offsetWidth; // получаем ширину карты
 
 // создаем похожее объявление
 var getSimilarAd = function (properties) {
@@ -97,7 +97,7 @@ for (var i = 0; i < 8; i++) {
   randomNumber = getRandomNumber(0, FEATURES.length - 1);
   var randomFeatures = getRandomFeatures(randomNumber);
 
-  var randomDescription = 'произвольная строка с описанием';
+  var randomDescription = 'произвольная строк(а/и) подробным с описанием';
 
   randomNumber = getRandomNumber(0, 20);
   var randomPhotos = getPathPhotos(randomNumber);
@@ -137,8 +137,8 @@ var mapPinTemplate = document.querySelector('#pin')
   .content
   .querySelector('.map__pin');
 
-// заполняем блок похожего объявления
-var renderMapPin = function (similarAd) {
+// заполняем метку похожего объявления
+var createMapPin = function (similarAd) {
   var mapPinElement = mapPinTemplate.cloneNode(true);
   mapPinElement.style.left = similarAd.location.x - 25 + 'px';
   mapPinElement.style.top = similarAd.location.y - 70 + 'px';
@@ -147,12 +147,127 @@ var renderMapPin = function (similarAd) {
   return mapPinElement;
 };
 
-// вывод похожих объявлений на страницу
-var renderBloks = function (similarAdsArr) {
+// выводим метки похожих объявлений на страницу
+var renderMapPins = function (similarAdsArr) {
   var fragment = document.createDocumentFragment();
   similarAdsArr.forEach(function (similarAd) {
-    fragment.appendChild(renderMapPin(similarAd));
+    fragment.appendChild(createMapPin(similarAd));
   });
-  mapBlock.appendChild(fragment);
+  mapPins.appendChild(fragment);
 };
-renderBloks(similarAds);
+renderMapPins(similarAds);
+
+
+// создаем карточку объявления
+
+// место для вставки карточки похожего объявления
+var mapCard = document.querySelector('.map');
+// получаем шаблон карточки для похожего объявленя
+var mapCardTemplate = document.querySelector('#card')
+  .content
+  .querySelector('.map__card');
+// элемент, перед которым будет вставлена карточка похожего объевления
+var mapFiltersContainer = document.querySelector('.map__filters-container');
+
+// получаем алиас типа жилья
+var getHousingType = function (offerType) {
+  var housingType = '';
+  switch (offerType) {
+    case 'flat':
+      housingType = 'Квартира';
+      break;
+    case 'bungalo':
+      housingType = 'Бунгало';
+      break;
+    case 'house':
+      housingType = 'Дом';
+      break;
+    case 'palace':
+      housingType = 'Дворец';
+      break;
+  }
+  return housingType;
+};
+
+// получаем алиас всех доступных удобств в объявлении
+var getAllAvailableFeatures = function (offerFeatures) {
+  var allAvailableFeatures = [];
+
+  offerFeatures.forEach(function (itemFeature) {
+    switch (itemFeature) {
+      case 'wifi':
+        allAvailableFeatures.push('Wi-Fi');
+        break;
+      case 'dishwasher':
+        allAvailableFeatures.push('Посудомоечная машина');
+        break;
+      case 'parking':
+        allAvailableFeatures.push('Парковка');
+        break;
+      case 'washer':
+        allAvailableFeatures.push('Стиральная машина');
+        break;
+      case 'elevator':
+        allAvailableFeatures.push('Лифт');
+        break;
+      case 'conditioner':
+        allAvailableFeatures.push('Кондиционер');
+        break;
+    }
+  });
+  var allAvailableFeaturesStr = allAvailableFeatures.join(', ');
+  return allAvailableFeaturesStr;
+};
+
+// создаем фотографии в popup
+var createPopupPhoto = function (itemPhoto, mapCardElement) {
+  var popupPhoto = mapCardElement.querySelector('.popup__photo').cloneNode(true);
+  popupPhoto.src = itemPhoto;
+  return popupPhoto;
+};
+
+// выводим фотографии в popup
+var renderPopupPhotos = function (photos, mapCardElement) {
+  // получаем блок для вставки фотографий
+  var popupPhotos = mapCardElement.querySelector('.popup__photos');
+  var fragment = document.createDocumentFragment();
+  photos.forEach(function (itemPhoto) {
+    fragment.appendChild(createPopupPhoto(itemPhoto, mapCardElement));
+  });
+  popupPhotos.appendChild(fragment);
+};
+
+// заполняем карточку похожего объявления
+var createCard = function (similarAd) {
+  var mapCardElement = mapCardTemplate.cloneNode(true);
+  mapCardElement.querySelector('.popup__title').textContent = similarAd.offer.title;
+  mapCardElement.querySelector('.popup__text--address').textContent = similarAd.offer.address;
+  mapCardElement.querySelector('.popup__text--price').textContent = similarAd.offer.price + '₽/ночь';
+
+  var housingType = getHousingType(similarAd.offer.type);
+  mapCardElement.querySelector('.popup__type').textContent = housingType;
+
+  mapCardElement.querySelector('.popup__text--capacity').textContent = similarAd.offer.rooms + ' комнаты для ' + similarAd.offer.rooms + ' гостей';
+  mapCardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + similarAd.offer.checkin + ', выезд до ' + similarAd.offer.checkout;
+
+  var allAvailableFeaturesStr = getAllAvailableFeatures(similarAd.offer.features);
+  mapCardElement.querySelector('.popup__feature').textContent = allAvailableFeaturesStr;
+
+  mapCardElement.querySelector('.popup__description').textContent = similarAd.offer.description;
+
+  renderPopupPhotos(similarAd.offer.photos, mapCardElement);
+
+  mapCardElement.querySelector('.popup__avatar').src = similarAd.author.avatar;
+
+  return mapCardElement;
+};
+
+// выводим карточки похожих объявлений
+var renderCards = function (similarAd) {
+  var fragment = document.createDocumentFragment();
+  fragment.appendChild(createCard(similarAd));
+  mapCard.insertBefore(fragment, mapFiltersContainer);
+};
+
+var randomCard = getRandomNumber(0, similarAds.length - 1);
+renderCards(similarAds[randomCard]);
