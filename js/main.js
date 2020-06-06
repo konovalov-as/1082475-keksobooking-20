@@ -190,33 +190,29 @@ var getHousingType = function (offerType) {
 };
 
 // получаем алиас всех доступных удобств в объявлении
-var getAllAvailableFeatures = function (offerFeatures) {
-  var allAvailableFeatures = [];
-
+var getAllAvailableFeatures = function (offerFeatures, mapCardElement) {
   offerFeatures.forEach(function (itemFeature) {
     switch (itemFeature) {
       case 'wifi':
-        allAvailableFeatures.push('Wi-Fi');
+        mapCardElement.querySelector('.popup__feature--wifi').textContent = 'Wi-Fi';
         break;
       case 'dishwasher':
-        allAvailableFeatures.push('Посудомоечная машина');
+        mapCardElement.querySelector('.popup__feature--dishwasher').textContent = 'Посудомоечная машина';
         break;
       case 'parking':
-        allAvailableFeatures.push('Парковка');
+        mapCardElement.querySelector('.popup__feature--parking').textContent = 'Парковка';
         break;
       case 'washer':
-        allAvailableFeatures.push('Стиральная машина');
+        mapCardElement.querySelector('.popup__feature--washer').textContent = 'Стиральная машина';
         break;
       case 'elevator':
-        allAvailableFeatures.push('Лифт');
+        mapCardElement.querySelector('.popup__feature--elevator').textContent = 'Лифт';
         break;
       case 'conditioner':
-        allAvailableFeatures.push('Кондиционер');
+        mapCardElement.querySelector('.popup__feature--conditioner').textContent = 'Кондиционер';
         break;
     }
   });
-  var allAvailableFeaturesStr = allAvailableFeatures.join(', ');
-  return allAvailableFeaturesStr;
 };
 
 // создаем фотографии в popup
@@ -250,8 +246,7 @@ var createCard = function (similarAd) {
   mapCardElement.querySelector('.popup__text--capacity').textContent = similarAd.offer.rooms + ' комнаты для ' + similarAd.offer.rooms + ' гостей';
   mapCardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + similarAd.offer.checkin + ', выезд до ' + similarAd.offer.checkout;
 
-  var allAvailableFeaturesStr = getAllAvailableFeatures(similarAd.offer.features);
-  mapCardElement.querySelector('.popup__feature').textContent = allAvailableFeaturesStr;
+  getAllAvailableFeatures(similarAd.offer.features, mapCardElement);
 
   mapCardElement.querySelector('.popup__description').textContent = similarAd.offer.description;
 
