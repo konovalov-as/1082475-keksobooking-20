@@ -231,7 +231,6 @@ var getAllAvailableFeatures = function (offerFeatures, mapCardElement) {
 
 // создаем фотографии в popup
 var createPopupPhoto = function (itemPhoto, mapCardElement) {
-  console.log(itemPhoto);
   var popupPhoto = mapCardElement.querySelector('.popup__photo').cloneNode(true);
   popupPhoto.src = itemPhoto;
   return popupPhoto;
@@ -239,7 +238,6 @@ var createPopupPhoto = function (itemPhoto, mapCardElement) {
 
 // выводим фотографии в popup
 var renderPopupPhotos = function (photos, mapCardElement) {
-  console.log(photos);
   var divPopupPhotos = mapCardElement.querySelector('.popup__photos');
   var imgPopupPhoto = mapCardElement.querySelector('.popup__photo');
 
