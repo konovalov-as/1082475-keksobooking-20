@@ -1,7 +1,7 @@
 'use strict';
 
-var OFFER_TYPE = ['palace', 'flat', 'house', 'bungalo'];
-var REGISTRATION = ['12:00', '13:00', '14:00'];
+var OFFER_TYPES = ['palace', 'flat', 'house', 'bungalo'];
+var REGISTRATIONS = ['12:00', '13:00', '14:00'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
 var WORDS = ['семь', 'раз', 'поешь', 'один', 'раз', 'поспи'];
 
@@ -13,8 +13,8 @@ var getRandomNumber = function (min, max) {
 };
 
 // получаем случайные данные
-var getRandomElement = function (randomIndex, array) {
-  var randomElement = array[randomIndex];
+var getRandomElement = function (randomIndex, arrays) {
+  var randomElement = arrays[randomIndex];
   return randomElement;
 };
 
@@ -40,8 +40,8 @@ var getRandomFeatures = function (randomNumber) {
   return randomFeatures;
 };
 
-// получаем адреса фоторграфий
-var getPathPhotos = function (randomNumber) {
+// получаем адреса фотографий
+var getPhotoPaths = function (randomNumber) {
   var randomPhotos = [];
   for (var k = 0; k < randomNumber; k++) {
     randomPhotos.push('http://o0.github.io/assets/images/tokyo/hotel' + (k + 1) + '.jpg');
@@ -54,27 +54,27 @@ var mapPins = document.querySelector('.map__pins'); // место для вст�
 var mapWidth = mapPins.offsetWidth; // получаем ширину карты
 
 // создаем похожее объявление
-var getSimilarAd = function (properties) {
+var getSimilarAd = function (property) {
   var similarAd = {
     'author': {
-      'avatar': properties.avatar,
+      'avatar': property.avatar,
     },
     'offer': {
-      'title': properties.title,
-      'address': properties.address,
-      'price': properties.price,
-      'type': properties.type,
-      'rooms': properties.rooms,
-      'guests': properties.guests,
-      'checkin': properties.checkin,
-      'checkout': properties.checkout,
-      'features': properties.features,
-      'description': properties.description,
-      'photos': properties.photos,
+      'title': property.title,
+      'address': property.address,
+      'price': property.price,
+      'type': property.type,
+      'rooms': property.rooms,
+      'guests': property.guests,
+      'checkin': property.checkin,
+      'checkout': property.checkout,
+      'features': property.features,
+      'description': property.description,
+      'photos': property.photos,
     },
     'location': {
-      'x': properties.locationX,
-      'y': properties.locationY,
+      'x': property.locationX,
+      'y': property.locationY,
     },
   };
   return similarAd;
@@ -88,11 +88,11 @@ for (var i = 0; i < 8; i++) {
   var randomTitle = getRandomTitle(randomNumber);
 
   var randomPrice = getRandomNumber(1, 1000);
-  var randomOfferType = getRandomElement(getRandomNumber(0, OFFER_TYPE.length - 1), OFFER_TYPE);
+  var randomOfferType = getRandomElement(getRandomNumber(0, OFFER_TYPES.length - 1), OFFER_TYPES);
   var randomRooms = getRandomNumber(1, 5);
   var randomGuests = getRandomNumber(1, 10);
-  var randomCheckin = getRandomElement(getRandomNumber(0, REGISTRATION.length - 1), REGISTRATION);
-  var randomCheckout = getRandomElement(getRandomNumber(0, REGISTRATION.length - 1), REGISTRATION);
+  var randomCheckin = getRandomElement(getRandomNumber(0, REGISTRATIONS.length - 1), REGISTRATIONS);
+  var randomCheckout = getRandomElement(getRandomNumber(0, REGISTRATIONS.length - 1), REGISTRATIONS);
 
   randomNumber = getRandomNumber(0, FEATURES.length - 1);
   var randomFeatures = getRandomFeatures(randomNumber);
@@ -100,7 +100,7 @@ for (var i = 0; i < 8; i++) {
   var randomDescription = 'произвольная строк(а/и) подробным с описанием';
 
   randomNumber = getRandomNumber(0, 20);
-  var randomPhotos = getPathPhotos(randomNumber);
+  var randomPhotos = getPhotoPaths(randomNumber);
 
   var randomX = getRandomNumber(0, mapWidth);
   var randomY = getRandomNumber(130, 630);
@@ -132,7 +132,7 @@ if (map) {
   map.classList.remove('map--faded');
 }
 
-// получаем шаблон метки для похожего объявленя
+// получаем шаблон метки для похожего объявленья
 var mapPinTemplate = document.querySelector('#pin')
   .content
   .querySelector('.map__pin');
@@ -162,11 +162,11 @@ renderMapPins(similarAds);
 
 // место для вставки карточки похожего объявления
 var mapCard = document.querySelector('.map');
-// получаем шаблон карточки для похожего объявленя
+// получаем шаблон карточки для похожего объявленья
 var mapCardTemplate = document.querySelector('#card')
   .content
   .querySelector('.map__card');
-// элемент, перед которым будет вставлена карточка похожего объевления
+// элемент, перед которым будет вставлена карточка похожего объявления
 var mapFiltersContainer = document.querySelector('.map__filters-container');
 
 // получаем алиас типа жилья
@@ -213,6 +213,20 @@ var getAllAvailableFeatures = function (offerFeatures, mapCardElement) {
         break;
     }
   });
+
+  var ulPopupFeatures = mapCardElement.querySelector('.popup__features');
+  var featureChildren = ulPopupFeatures.children;
+
+  if (offerFeatures.length === 0) {
+    ulPopupFeatures.parentElement.removeChild(ulPopupFeatures);
+  } else {
+    for (var m = featureChildren.length - 1; m >= 0; m--) {
+      var featureChild = featureChildren[m];
+      if (featureChild.textContent === '') {
+        featureChild.parentElement.removeChild(featureChild);
+      }
+    }
+  }
 };
 
 // создаем фотографии в popup
@@ -224,12 +238,21 @@ var createPopupPhoto = function (itemPhoto, mapCardElement) {
 
 // выводим фотографии в popup
 var renderPopupPhotos = function (photos, mapCardElement) {
+  var divPopupPhotos = mapCardElement.querySelector('.popup__photos');
+  var imgPopupPhoto = mapCardElement.querySelector('.popup__photo');
+
   // получаем блок для вставки фотографий
   var popupPhotos = mapCardElement.querySelector('.popup__photos');
   var fragment = document.createDocumentFragment();
-  photos.forEach(function (itemPhoto) {
-    fragment.appendChild(createPopupPhoto(itemPhoto, mapCardElement));
-  });
+
+  if (photos.length === 0 && divPopupPhotos && imgPopupPhoto) {
+    divPopupPhotos.parentElement.removeChild(divPopupPhotos);
+    imgPopupPhoto.parentElement.removeChild(imgPopupPhoto);
+  } else {
+    photos.forEach(function (itemPhoto) {
+      fragment.appendChild(createPopupPhoto(itemPhoto, mapCardElement));
+    });
+  }
   popupPhotos.appendChild(fragment);
 };
 
