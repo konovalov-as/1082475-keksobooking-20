@@ -9,10 +9,6 @@
   var ROUND_PIN_SIZE = 65;
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
-  var MIN_TITLE_LENGTH = 30;
-  var MAX_TITLE_LENGTH = 100;
-  var MIN_PRICE_LENGTH = 0;
-  var MAX_PRICE_LENGTH = 1000000;
 
   // получает случайное число
   var getRandomNumber = function (min, max) {
@@ -294,103 +290,81 @@
 
   // форма с фильтрами
   var mapFiltersForm = document.querySelector('.map__filters');
-  if (mapFiltersForm) {
-    var mapFiltersSelect = mapFiltersForm.querySelectorAll('select');
-    var mapFiltersFieldset = mapFiltersForm.querySelector('fieldset');
-    // поля формы с фильтрами
-    var selectHousingPrice = mapFiltersForm.querySelector('#housing-price');
-  }
+  var mapFiltersSelect = mapFiltersForm.querySelectorAll('select');
+  var mapFiltersFieldset = mapFiltersForm.querySelector('fieldset');
+  // поля формы с фильтрами
+  var selectHousingPrice = mapFiltersForm.querySelector('#housing-price');
+
   // отключает элементы управления формы фильтра
-  if (mapFiltersSelect) {
-    mapFiltersSelect.forEach(function (itemSelect) {
-      itemSelect.setAttribute('disabled', 'disabled');
-    });
-  }
-  if (mapFiltersFieldset) {
-    mapFiltersFieldset.setAttribute('disabled', 'disabled');
-  }
+  mapFiltersSelect.forEach(function (itemSelect) {
+    itemSelect.setAttribute('disabled', 'disabled');
+  });
+  mapFiltersFieldset.setAttribute('disabled', 'disabled');
 
   // форма с объявлениями
   var mapAdForm = document.querySelector('.ad-form');
-  if (mapAdForm) {
-    mapAdForm.setAttribute('action', 'https://javascript.pages.academy/keksobooking');
-    var adFormHeaderFieldset = mapAdForm.querySelector('.ad-form-header');
-    var adFormElementFieldset = mapAdForm.querySelectorAll('.ad-form__element');
-    // поля формы с объявлениями
-    var inputAddress = mapAdForm.querySelector('#address');
-    var inputTitle = mapAdForm.querySelector('#title');
-    var inputPrice = mapAdForm.querySelector('#price');
-    var selectType = mapAdForm.querySelector('#type');
-    var selectCheckIn = mapAdForm.querySelector('#timein');
-    var selectCheckOut = mapAdForm.querySelector('#timeout');
-    var selectRoomNumber = mapAdForm.querySelector('#room_number');
-    var selectCapacity = mapAdForm.querySelector('#capacity');
-  }
+  var adFormHeaderFieldset = mapAdForm.querySelector('.ad-form-header');
+  var adFormElementFieldset = mapAdForm.querySelectorAll('.ad-form__element');
+  // поля формы с объявлениями
+  var inputAddress = mapAdForm.querySelector('#address');
+  var inputTitle = mapAdForm.querySelector('#title');
+  var inputPrice = mapAdForm.querySelector('#price');
+  var selectType = mapAdForm.querySelector('#type');
+  var selectCheckIn = mapAdForm.querySelector('#timein');
+  var selectCheckOut = mapAdForm.querySelector('#timeout');
+  var selectRoomNumber = mapAdForm.querySelector('#room_number');
+  var selectCapacity = mapAdForm.querySelector('#capacity');
 
   // валидация полей
   // заголовок объявления
-  if (inputTitle) {
-    inputTitle.setAttribute('required', 'required');
-    inputTitle.setAttribute('minlength', MIN_TITLE_LENGTH);
-    inputTitle.setAttribute('maxlength', MAX_TITLE_LENGTH);
+  inputTitle.addEventListener('invalid', function () {
+    if (inputTitle.validity.tooShort) {
+      inputTitle.setCustomValidity('Заголовок должен состоять минимум из 30-ти символов');
+    } else if (inputTitle.validity.tooLong) {
+      inputTitle.setCustomValidity('Заголовок не должен превышать 100 символов');
+    } else if (inputTitle.validity.valueMissing) {
+      inputTitle.setCustomValidity('Обязательное поле');
+    } else {
+      inputTitle.setCustomValidity('');
+    }
+  });
 
-    inputTitle.addEventListener('invalid', function () {
-      if (inputTitle.validity.tooShort) {
-        inputTitle.setCustomValidity('Заголовок должен состоять минимум из 30-ти символов.');
-      } else if (inputTitle.validity.tooLong) {
-        inputTitle.setCustomValidity('Заголовок не должен превышать 100 символов.');
-      } else if (inputTitle.validity.valueMissing) {
-        inputTitle.setCustomValidity('Обязательное поле.');
-      } else {
-        inputTitle.setCustomValidity('');
-      }
-    });
+  var minTitleLength = inputTitle.minLength;
+  var maxTitleLengtn = inputTitle.maxLength;
 
-    inputTitle.addEventListener('input', function () {
-      var valueLength = inputTitle.value.length;
+  inputTitle.addEventListener('input', function () {
+    var valueLength = inputTitle.value.length;
 
-      if (valueLength < MIN_TITLE_LENGTH) {
-        inputTitle.setCustomValidity('Ещё ' + (MIN_TITLE_LENGTH - valueLength) + ' символов.');
-      } else if (valueLength > MAX_TITLE_LENGTH) {
-        inputTitle.setCustomValidity('Удалите лишние ' + (valueLength - MAX_TITLE_LENGTH) + ' символов.');
-      } else {
-        inputTitle.setCustomValidity('');
-      }
-    });
-  }
+    if (valueLength < minTitleLength) {
+      inputTitle.setCustomValidity('Ещё ' + (minTitleLength - valueLength) + ' символов');
+    } else if (valueLength > maxTitleLengtn) {
+      inputTitle.setCustomValidity('Удалите лишние ' + (valueLength - maxTitleLengtn) + ' символов');
+    } else {
+      inputTitle.setCustomValidity('');
+    }
+  });
+
   // цена за ночь
   var validationPrice = function () {
-    if (inputPrice.validity.badInput) {
-      inputPrice.setCustomValidity('Пожалуйста, число.');
-    } else if (inputPrice.validity.rangeUnderflow && inputPrice.min <= '0') {
-      inputPrice.setCustomValidity('Пожалуйста, не меньше 0');
-    } else if (inputPrice.validity.rangeUnderflow && inputPrice.min <= '1000') {
-      inputPrice.setCustomValidity('Пожалуйста, не меньше 1 000');
-    } else if (inputPrice.validity.rangeUnderflow && inputPrice.min <= '5000') {
-      inputPrice.setCustomValidity('Пожалуйста, не меньше 5 000');
-    } else if (inputPrice.validity.rangeUnderflow && inputPrice.min <= '10000') {
-      inputPrice.setCustomValidity('Пожалуйста, не меньше 10 000');
-    } else if (inputPrice.validity.rangeOverflow) {
-      inputPrice.setCustomValidity('Пожалуйста, значение не более 1 000 000');
-    } else if (inputPrice.validity.valueMissing) {
-      inputPrice.setCustomValidity('Обязательное поле.');
+    if (inputPrice.validity.valueMissing) {
+      inputPrice.setCustomValidity('Обязательное поле');
+    } else if (inputPrice.validity.badInput) {
+      inputPrice.setCustomValidity('Пожалуйста, число');
+    } else if (inputPrice.validity.rangeUnderflow) {
+      inputPrice.setCustomValidity('Пожалуйста, не меньше ' + inputPrice.min);
     } else {
       inputPrice.setCustomValidity('');
     }
   };
-  if (inputPrice) {
-    inputPrice.setAttribute('required', 'required');
-    inputPrice.setAttribute('min', MIN_PRICE_LENGTH);
-    inputPrice.setAttribute('max', MAX_PRICE_LENGTH);
 
-    inputPrice.addEventListener('invalid', function () {
-      validationPrice();
+  inputPrice.addEventListener('invalid', function () {
+    validationPrice();
 
-    });
-    inputPrice.addEventListener('input', function () {
-      validationPrice();
-    });
-  }
+  });
+  inputPrice.addEventListener('input', function () {
+    validationPrice();
+  });
+
   // тип жилья
   // проверяет тип жилья
   var checkHousingType = function (housingType) {
@@ -411,6 +385,7 @@
     }
     return type;
   };
+
   // получает минимальное значения поля 'цена за ночь'
   var getMinPrice = function (housingType) {
     var minPrice;
@@ -434,12 +409,12 @@
     }
     return minPrice;
   };
+
   // устанавливает минимальное значения поля 'цена за ночь'
   var setMinPrice = function (minPrice) {
-    if (inputPrice) {
-      inputPrice.setAttribute('min', minPrice);
-    }
+    inputPrice.setAttribute('min', minPrice);
   };
+
   // устанавливает значение плейсхолдера
   var setHousingPrice = function (minPrice) {
     switch (minPrice) {
@@ -459,6 +434,7 @@
         selectHousingPrice.value = 'any';
     }
   };
+
   // изменяет минимальное значение цены и плейсхолдера
   if (selectType && selectHousingPrice) {
     var minPrice = getMinPrice(checkHousingType(selectType.value));
@@ -468,6 +444,7 @@
       setHousingPrice(minPrice);
     });
   }
+
   // время заезда и время выезда
   var changeCheckIn = function (checkIn) {
     selectCheckIn.value = checkIn;
@@ -475,16 +452,13 @@
   var changeCheckOut = function (checkOut) {
     selectCheckOut.value = checkOut;
   };
-  if (selectCheckIn) {
-    selectCheckIn.addEventListener('change', function () {
-      changeCheckOut(selectCheckIn.value);
-    });
-  }
-  if (selectCheckOut) {
-    selectCheckOut.addEventListener('change', function () {
-      changeCheckIn(selectCheckOut.value);
-    });
-  }
+  selectCheckIn.addEventListener('change', function () {
+    changeCheckOut(selectCheckIn.value);
+  });
+  selectCheckOut.addEventListener('change', function () {
+    changeCheckIn(selectCheckOut.value);
+  });
+
   // количество комнат и гостей
   // проверяет количество комнат
   var checkRoomNumber = function (roomNumber) {
@@ -504,6 +478,7 @@
     }
     return roomNumber;
   };
+
   // проверяет количество гостей
   var checkCapacity = function (сapacity) {
     switch (сapacity) {
@@ -522,122 +497,87 @@
     }
     return сapacity;
   };
+
   // устанавливает к выбору количество доступных гостей
   var setCapacity = function (roomNumber, сapacity) {
     switch (roomNumber) {
       case 1:
         if (!(roomNumber === сapacity)) {
-          selectCapacity.setCustomValidity('1 комната для 1 гостя.');
+          selectCapacity.setCustomValidity('1 комната для 1 гостя');
         } else {
           selectCapacity.setCustomValidity('');
         }
-        selectCapacity.querySelector('option[value="0"]').setAttribute('disabled', 'disabled');
-        selectCapacity.querySelector('option[value="1"]').removeAttribute('disabled');
-        selectCapacity.querySelector('option[value="2"]').setAttribute('disabled', 'disabled');
-        selectCapacity.querySelector('option[value="3"]').setAttribute('disabled', 'disabled');
         break;
       case 2:
         if (!(roomNumber >= сapacity)) {
-          selectCapacity.setCustomValidity('2 комнаты для 2 гостей или для 1 гостя.');
+          selectCapacity.setCustomValidity('2 комнаты для 2 гостей или для 1 гостя');
         } else {
           selectCapacity.setCustomValidity('');
         }
-        selectCapacity.querySelector('option[value="0"]').setAttribute('disabled', 'disabled');
-        selectCapacity.querySelector('option[value="1"]').removeAttribute('disabled');
-        selectCapacity.querySelector('option[value="2"]').removeAttribute('disabled');
-        selectCapacity.querySelector('option[value="3"]').setAttribute('disabled', 'disabled');
         break;
       case 3:
         if (!(roomNumber >= сapacity)) {
-          selectCapacity.setCustomValidity('3 комнаты для 3 гостей, для 2 гостей или для 1 гостя.');
+          selectCapacity.setCustomValidity('3 комнаты для 3 гостей, для 2 гостей или для 1 гостя');
         } else {
           selectCapacity.setCustomValidity('');
         }
-        selectCapacity.querySelector('option[value="0"]').setAttribute('disabled', 'disabled');
-        selectCapacity.querySelector('option[value="1"]').removeAttribute('disabled');
-        selectCapacity.querySelector('option[value="2"]').removeAttribute('disabled');
-        selectCapacity.querySelector('option[value="3"]').removeAttribute('disabled');
         break;
       case 100:
         if (!(roomNumber === сapacity)) {
-          selectCapacity.setCustomValidity('не для гостей.');
+          selectCapacity.setCustomValidity('не для гостей');
         } else {
           selectCapacity.setCustomValidity('');
         }
-        selectCapacity.querySelector('option[value="0"]').removeAttribute('disabled');
-        selectCapacity.querySelector('option[value="1"]').setAttribute('disabled', 'disabled');
-        selectCapacity.querySelector('option[value="2"]').setAttribute('disabled', 'disabled');
-        selectCapacity.querySelector('option[value="3"]').setAttribute('disabled', 'disabled');
     }
   };
+
   // выбирает количества комнат
-  if (selectRoomNumber) {
-    var roomNumber = checkRoomNumber(selectRoomNumber.value);
-    var сapacity = checkCapacity(selectCapacity.value);
-    setCapacity(roomNumber, сapacity);
-    selectRoomNumber.addEventListener('change', function () {
-      roomNumber = checkRoomNumber(selectRoomNumber.value);
-      сapacity = checkCapacity(selectCapacity.value);
-      setCapacity(roomNumber, сapacity);
-    });
-  }
-  // выбирает количества комнат
-  if (selectCapacity) {
+  var roomNumber = checkRoomNumber(selectRoomNumber.value);
+  var сapacity = checkCapacity(selectCapacity.value);
+  setCapacity(roomNumber, сapacity);
+  selectRoomNumber.addEventListener('change', function () {
     roomNumber = checkRoomNumber(selectRoomNumber.value);
     сapacity = checkCapacity(selectCapacity.value);
-    selectCapacity.addEventListener('change', function () {
-      roomNumber = checkRoomNumber(selectRoomNumber.value);
-      сapacity = checkCapacity(selectCapacity.value);
-      setCapacity(roomNumber, сapacity);
-    });
-  }
+    setCapacity(roomNumber, сapacity);
+  });
+
+  // выбирает количества комнат
+  roomNumber = checkRoomNumber(selectRoomNumber.value);
+  сapacity = checkCapacity(selectCapacity.value);
+  selectCapacity.addEventListener('change', function () {
+    roomNumber = checkRoomNumber(selectRoomNumber.value);
+    сapacity = checkCapacity(selectCapacity.value);
+    setCapacity(roomNumber, сapacity);
+  });
 
   // отключает элементы управления формы объявлений
-  if (adFormHeaderFieldset) {
-    adFormHeaderFieldset.setAttribute('disabled', 'disabled');
-  }
-  if (adFormElementFieldset) {
-    adFormElementFieldset.forEach(function (itemFieldset) {
-      itemFieldset.setAttribute('disabled', 'disabled');
-    });
-  }
+  adFormHeaderFieldset.setAttribute('disabled', 'disabled');
+  adFormElementFieldset.forEach(function (itemFieldset) {
+    itemFieldset.setAttribute('disabled', 'disabled');
+  });
 
   // активирует страницу
   var map = document.querySelector('.map');
   var mapPinMain = document.querySelector('.map__pin--main');
-  var activationPage = function () {
-    if (map) {
-      // открывает карту объявлений
-      map.classList.remove('map--faded');
-      // рисует объявления на карте
-      renderMapPins(similarAds);
-      // включает элементы управления формы фильтра
-      if (mapFiltersSelect) {
-        mapFiltersSelect.forEach(function (itemSelect) {
-          itemSelect.removeAttribute('disabled');
-        });
-      }
-      if (mapFiltersFieldset) {
-        mapFiltersFieldset.removeAttribute('disabled');
-      }
-      // включает элементы управления формы объявлений
-      if (adFormHeaderFieldset) {
-        adFormHeaderFieldset.removeAttribute('disabled');
-      }
-      if (adFormElementFieldset) {
-        adFormElementFieldset.forEach(function (itemFieldset) {
-          itemFieldset.removeAttribute('disabled');
-        });
-      }
-      // убирает прозрачность формы
-      if (mapAdForm) {
-        mapAdForm.classList.remove('ad-form--disabled');
-      }
-      // устанавливает атрибут только для чтения поля адрес
-      if (inputAddress) {
-        inputAddress.setAttribute('readonly', 'readonly');
-      }
-    }
+  var activatePage = function () {
+    // открывает карту объявлений
+    map.classList.remove('map--faded');
+    // рисует объявления на карте
+    renderMapPins(similarAds);
+    // включает элементы управления формы фильтра
+    mapFiltersSelect.forEach(function (itemSelect) {
+      itemSelect.removeAttribute('disabled');
+    });
+    mapFiltersFieldset.removeAttribute('disabled');
+    // включает элементы управления формы объявлений
+    adFormHeaderFieldset.removeAttribute('disabled');
+    adFormElementFieldset.forEach(function (itemFieldset) {
+      itemFieldset.removeAttribute('disabled');
+    });
+    // убирает прозрачность формы
+    mapAdForm.classList.remove('ad-form--disabled');
+    // устанавливает атрибут только для чтения поля адрес
+    inputAddress.setAttribute('readonly', 'readonly');
   };
 
   // получает координаты метки
@@ -653,30 +593,26 @@
       x = Math.floor(parseInt(xLeft.substr(0, [xLeft.length - 2]), 10) + PIN_WIDTH / 2);
       y = Math.floor(parseInt(yTop.substr(0, [yTop.length - 2]), 10) + PIN_HEIGHT);
     }
-    if (inputAddress) {
-      inputAddress.value = x + ', ' + y;
-    }
+    inputAddress.value = x + ', ' + y;
   };
   getPinCoordinates(true);
 
   // активирует страницу кликом
-  if (mapPinMain) {
-    mapPinMain.addEventListener('mousedown', function (evt) {
-      if (typeof evt === 'object') {
-        if (evt.button === 0) {
-          activationPage();
-          getPinCoordinates(false);
-        }
-      }
-    });
-
-    // активирует страницу с клавиатуры
-    mapPinMain.addEventListener('keydown', function (evt) {
-      if (evt.key === 'Enter') {
-        activationPage();
+  mapPinMain.addEventListener('mousedown', function (evt) {
+    if (typeof evt === 'object') {
+      if (evt.button === 0) {
+        activatePage();
         getPinCoordinates(false);
       }
-    });
-  }
+    }
+  });
+
+  // активирует страницу с клавиатуры
+  mapPinMain.addEventListener('keydown', function (evt) {
+    if (evt.key === 'Enter') {
+      activatePage();
+      getPinCoordinates(false);
+    }
+  });
 
 })();
