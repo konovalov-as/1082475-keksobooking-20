@@ -6,9 +6,18 @@
   var REGISTRATIONS = ['12:00', '13:00', '14:00'];
   var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
   var WORDS = ['семь', 'раз', 'поешь', 'один', 'раз', 'поспи'];
-  var ROUND_PIN_SIZE = 65;
-  var PIN_WIDTH = 50;
-  var PIN_HEIGHT = 70;
+  var QUANTITY_AD = 8;
+  var QUANTITY_PHOTO = 5;
+  var TOP_BOUND_Y = 130;
+  var BOTTOM_BOUND_Y = 630;
+  var ENTER_KEY = 'Enter';
+  var MOUSE_LEFT_BUTTON = 0;
+  var PinSize = {
+    SIDE_LENGTH: 65,
+    WIDTH: 50,
+    HEIGHT: 70,
+  };
+
 
   // получает случайное число
   var getRandomNumber = function (min, max) {
@@ -18,9 +27,8 @@
   };
 
   // получает случайные данные
-  var getRandomElement = function (randomIndex, arrays) {
-    var randomElement = arrays[randomIndex];
-    return randomElement;
+  var getRandomElement = function (randomIndex, items) {
+    return items[randomIndex];
   };
 
   // получает случайный заголовок для аватарки
@@ -54,39 +62,39 @@
     return randomPhotos;
   };
 
-  var similarAds = []; // массив похожих объявлений
-  var mapPins = document.querySelector('.map__pins'); // место для вставки меток объявлений
-  var mapWidth = mapPins.offsetWidth; // получает ширину карты
+  var ads = []; // массив похожих объявлений
+  var mapPinsBox = document.querySelector('.map__pins'); // место для вставки меток объявлений
+  var mapWidth = mapPinsBox.offsetWidth; // получает ширину карты
 
   // создает похожее объявление
-  var getSimilarAd = function (property) {
+  var getSimilarAd = function (ad) {
     var similarAd = {
       'author': {
-        'avatar': property.avatar,
+        'avatar': ad.avatar,
       },
       'offer': {
-        'title': property.title,
-        'address': property.address,
-        'price': property.price,
-        'type': property.type,
-        'rooms': property.rooms,
-        'guests': property.guests,
-        'checkin': property.checkin,
-        'checkout': property.checkout,
-        'features': property.features,
-        'description': property.description,
-        'photos': property.photos,
+        'title': ad.title,
+        'address': ad.address,
+        'price': ad.price,
+        'type': ad.type,
+        'rooms': ad.rooms,
+        'guests': ad.guests,
+        'checkin': ad.checkin,
+        'checkout': ad.checkout,
+        'features': ad.features,
+        'description': ad.description,
+        'photos': ad.photos,
       },
       'location': {
-        'x': property.locationX,
-        'y': property.locationY,
+        'x': ad.locationX,
+        'y': ad.locationY,
       },
     };
     return similarAd;
   };
 
   // создает нужное количество похожих объявлений
-  for (var i = 0; i < 8; i++) {
+  for (var i = 0; i < QUANTITY_AD; i++) {
     var randomAvatar = 'img/avatars/user0' + (i + 1) + '.png';
 
     var randomNumber = getRandomNumber(1, WORDS.length - 1);
@@ -104,11 +112,11 @@
 
     var randomDescription = 'произвольная строк(а/и) подробным с описанием';
 
-    randomNumber = getRandomNumber(0, 5);
+    randomNumber = getRandomNumber(0, QUANTITY_PHOTO);
     var randomPhotos = getPhotoPaths(randomNumber);
 
     var randomX = getRandomNumber(0, mapWidth);
-    var randomY = getRandomNumber(130, 630);
+    var randomY = getRandomNumber(TOP_BOUND_Y, BOTTOM_BOUND_Y);
 
     var randomAddress = randomX + ', ' + randomY;
 
@@ -128,7 +136,7 @@
       locationX: randomX,
       locationY: randomY,
     });
-    similarAds.push(newAd);
+    ads.push(newAd);
   }
 
   // получает шаблон метки для похожего объявленья
@@ -137,22 +145,22 @@
     .querySelector('.map__pin');
 
   // заполняет метку похожего объявления
-  var createMapPin = function (similarAd) {
+  var createPin = function (ad) {
     var mapPinElement = mapPinTemplate.cloneNode(true);
-    mapPinElement.style.left = similarAd.location.x - 25 + 'px';
-    mapPinElement.style.top = similarAd.location.y - 70 + 'px';
-    mapPinElement.querySelector('img').src = similarAd.author.avatar;
-    mapPinElement.querySelector('img').alt = similarAd.offer.title;
+    mapPinElement.style.left = ad.location.x - PinSize.WIDTH / 2 + 'px';
+    mapPinElement.style.top = ad.location.y - PinSize.HEIGHT + 'px';
+    mapPinElement.querySelector('img').src = ad.author.avatar;
+    mapPinElement.querySelector('img').alt = ad.offer.title;
     return mapPinElement;
   };
 
   // выводит метки похожих объявлений на страницу
-  var renderMapPins = function (similarAdsArr) {
+  var renderPins = function () {
     var fragment = document.createDocumentFragment();
-    similarAdsArr.forEach(function (similarAd) {
-      fragment.appendChild(createMapPin(similarAd));
+    ads.forEach(function (Ad) {
+      fragment.appendChild(createPin(Ad));
     });
-    mapPins.appendChild(fragment);
+    mapPinsBox.appendChild(fragment);
   };
 
 
@@ -289,44 +297,46 @@
   // renderCards(similarAds[randomCard]);
 
   // форма с фильтрами
-  var mapFiltersForm = document.querySelector('.map__filters');
-  var mapFiltersSelect = mapFiltersForm.querySelectorAll('select');
-  var mapFiltersFieldset = mapFiltersForm.querySelector('fieldset');
-  // поля формы с фильтрами
-  var selectHousingPrice = mapFiltersForm.querySelector('#housing-price');
+  var filterForm = document.querySelector('.map__filters');
+  var filterSelects = filterForm.querySelectorAll('select');
+  var filterFieldset = filterForm.querySelector('fieldset');
 
   // отключает элементы управления формы фильтра
-  mapFiltersSelect.forEach(function (itemSelect) {
+  filterSelects.forEach(function (itemSelect) {
     itemSelect.setAttribute('disabled', 'disabled');
   });
-  mapFiltersFieldset.setAttribute('disabled', 'disabled');
+  filterFieldset.setAttribute('disabled', 'disabled');
 
   // форма с объявлениями
-  var mapAdForm = document.querySelector('.ad-form');
-  var adFormHeaderFieldset = mapAdForm.querySelector('.ad-form-header');
-  var adFormElementFieldset = mapAdForm.querySelectorAll('.ad-form__element');
+  var adForm = document.querySelector('.ad-form');
+  var adFormHeader = adForm.querySelector('.ad-form-header');
+  var adFormElements = adForm.querySelectorAll('.ad-form__element');
   // поля формы с объявлениями
-  var inputAddress = mapAdForm.querySelector('#address');
-  var inputTitle = mapAdForm.querySelector('#title');
-  var inputPrice = mapAdForm.querySelector('#price');
-  var selectType = mapAdForm.querySelector('#type');
-  var selectCheckIn = mapAdForm.querySelector('#timein');
-  var selectCheckOut = mapAdForm.querySelector('#timeout');
-  var selectRoomNumber = mapAdForm.querySelector('#room_number');
-  var selectCapacity = mapAdForm.querySelector('#capacity');
+  var inputAddress = adForm.querySelector('#address');
+  var inputTitle = adForm.querySelector('#title');
+  var inputPrice = adForm.querySelector('#price');
+  var selectType = adForm.querySelector('#type');
+  var selectCheckIn = adForm.querySelector('#timein');
+  var selectCheckOut = adForm.querySelector('#timeout');
+  var selectRoomNumber = adForm.querySelector('#room_number');
+  var selectCapacity = adForm.querySelector('#capacity');
 
   // валидация полей
   // заголовок объявления
   inputTitle.addEventListener('invalid', function () {
     if (inputTitle.validity.tooShort) {
       inputTitle.setCustomValidity('Заголовок должен состоять минимум из 30-ти символов');
-    } else if (inputTitle.validity.tooLong) {
-      inputTitle.setCustomValidity('Заголовок не должен превышать 100 символов');
-    } else if (inputTitle.validity.valueMissing) {
-      inputTitle.setCustomValidity('Обязательное поле');
-    } else {
-      inputTitle.setCustomValidity('');
+      return;
     }
+    if (inputTitle.validity.tooLong) {
+      inputTitle.setCustomValidity('Заголовок не должен превышать 100 символов');
+      return;
+    }
+    if (inputTitle.validity.valueMissing) {
+      inputTitle.setCustomValidity('Обязательное поле');
+      return;
+    }
+    inputTitle.setCustomValidity('');
   });
 
   var minTitleLength = inputTitle.minLength;
@@ -337,113 +347,59 @@
 
     if (valueLength < minTitleLength) {
       inputTitle.setCustomValidity('Ещё ' + (minTitleLength - valueLength) + ' символов');
-    } else if (valueLength > maxTitleLengtn) {
-      inputTitle.setCustomValidity('Удалите лишние ' + (valueLength - maxTitleLengtn) + ' символов');
-    } else {
-      inputTitle.setCustomValidity('');
+      return;
     }
+    if (valueLength > maxTitleLengtn) {
+      inputTitle.setCustomValidity('Удалите лишние ' + (valueLength - maxTitleLengtn) + ' символов');
+      return;
+    }
+    inputTitle.setCustomValidity('');
   });
 
   // цена за ночь
-  var validationPrice = function () {
+  var validatePrice = function () {
     if (inputPrice.validity.valueMissing) {
       inputPrice.setCustomValidity('Обязательное поле');
-    } else if (inputPrice.validity.badInput) {
-      inputPrice.setCustomValidity('Пожалуйста, число');
-    } else if (inputPrice.validity.rangeUnderflow) {
-      inputPrice.setCustomValidity('Пожалуйста, не меньше ' + inputPrice.min);
-    } else {
-      inputPrice.setCustomValidity('');
+      return;
     }
+    if (inputPrice.validity.badInput) {
+      inputPrice.setCustomValidity('Пожалуйста, число');
+      return;
+    }
+    if (inputPrice.validity.rangeUnderflow) {
+      inputPrice.setCustomValidity('Пожалуйста, не меньше ' + inputPrice.min);
+      return;
+    }
+    inputPrice.setCustomValidity('');
   };
 
   inputPrice.addEventListener('invalid', function () {
-    validationPrice();
+    validatePrice();
 
   });
   inputPrice.addEventListener('input', function () {
-    validationPrice();
+    validatePrice();
   });
 
-  // тип жилья
-  // проверяет тип жилья
-  var checkHousingType = function (housingType) {
-    var type = '';
-    switch (housingType) {
-      case 'bungalo':
-        type = 'bungalo';
-        break;
-      case 'flat':
-        type = 'flat';
-        break;
-      case 'house':
-        type = 'house';
-        break;
-      case 'palace':
-        type = 'palace';
-        break;
-    }
-    return type;
+  var mapTypeToPrice = {
+    bungalo: 0,
+    flat: 1000,
+    house: 5000,
+    palace: 10000,
   };
 
-  // получает минимальное значения поля 'цена за ночь'
-  var getMinPrice = function (housingType) {
-    var minPrice;
-    switch (housingType) {
-      case 'bungalo':
-        minPrice = 0;
-        setMinPrice(minPrice);
-        break;
-      case 'flat':
-        minPrice = 1000;
-        setMinPrice(minPrice);
-        break;
-      case 'house':
-        minPrice = 5000;
-        setMinPrice(minPrice);
-        break;
-      case 'palace':
-        minPrice = 10000;
-        setMinPrice(minPrice);
-        break;
-    }
-    return minPrice;
-  };
-
-  // устанавливает минимальное значения поля 'цена за ночь'
+  // устанавливает минимальное значения поля и плейсхолдера 'цена за ночь'
   var setMinPrice = function (minPrice) {
     inputPrice.setAttribute('min', minPrice);
+    inputPrice.setAttribute('placeholder', minPrice);
   };
 
-  // устанавливает значение плейсхолдера
-  var setHousingPrice = function (minPrice) {
-    switch (minPrice) {
-      case 0:
-        selectHousingPrice.value = 'low';
-        break;
-      case 1000:
-        selectHousingPrice.value = 'low';
-        break;
-      case 5000:
-        selectHousingPrice.value = 'low';
-        break;
-      case 10000:
-        selectHousingPrice.value = 'middle';
-        break;
-      default:
-        selectHousingPrice.value = 'any';
-    }
-  };
-
-  // изменяет минимальное значение цены и плейсхолдера
-  if (selectType && selectHousingPrice) {
-    var minPrice = getMinPrice(checkHousingType(selectType.value));
-    setHousingPrice(minPrice);
-    selectType.addEventListener('change', function () {
-      minPrice = getMinPrice(checkHousingType(selectType.value));
-      setHousingPrice(minPrice);
-    });
-  }
+  var minPrice = mapTypeToPrice[(selectType.value)];
+  setMinPrice(minPrice);
+  selectType.addEventListener('change', function () {
+    minPrice = mapTypeToPrice[(selectType.value)];
+    setMinPrice(minPrice);
+  });
 
   // время заезда и время выезда
   var changeCheckIn = function (checkIn) {
@@ -461,98 +417,109 @@
 
   // количество комнат и гостей
   // проверяет количество комнат
-  var checkRoomNumber = function (roomNumber) {
-    switch (roomNumber) {
-      case '1':
-        roomNumber = 1;
-        break;
-      case '2':
-        roomNumber = 2;
-        break;
-      case '3':
-        roomNumber = 3;
-        break;
-      case '100':
-        roomNumber = 100;
-        break;
-    }
-    return roomNumber;
-  };
+  // var checkRoomNumber = function (roomNumber) {
+  //   switch (roomNumber) {
+  //     case '1':
+  //       roomNumber = 1;
+  //       break;
+  //     case '2':
+  //       roomNumber = 2;
+  //       break;
+  //     case '3':
+  //       roomNumber = 3;
+  //       break;
+  //     case '100':
+  //       roomNumber = 100;
+  //       break;
+  //   }
+  //   return roomNumber;
+  // };
 
   // проверяет количество гостей
-  var checkCapacity = function (сapacity) {
-    switch (сapacity) {
-      case '1':
-        сapacity = 1;
-        break;
-      case '2':
-        сapacity = 2;
-        break;
-      case '3':
-        сapacity = 3;
-        break;
-      case '0':
-        сapacity = 100;
-        break;
+  var checkCapacity = function (capacity) {
+    if (capacity === 0) {
+      return 100;
     }
-    return сapacity;
+    return +capacity;
+    // switch (сapacity) {
+    //   case '1':
+    //     сapacity = 1;
+    //     break;
+    //   case '2':
+    //     сapacity = 2;
+    //     break;
+    //   case '3':
+    //     сapacity = 3;
+    //     break;
+    //   case '0':
+    //     сapacity = 100;
+    //     break;
+    // }
+    // return сapacity;
   };
 
   // устанавливает к выбору количество доступных гостей
-  var setCapacity = function (roomNumber, сapacity) {
-    switch (roomNumber) {
-      case 1:
-        if (!(roomNumber === сapacity)) {
-          selectCapacity.setCustomValidity('1 комната для 1 гостя');
-        } else {
-          selectCapacity.setCustomValidity('');
-        }
-        break;
-      case 2:
-        if (!(roomNumber >= сapacity)) {
-          selectCapacity.setCustomValidity('2 комнаты для 2 гостей или для 1 гостя');
-        } else {
-          selectCapacity.setCustomValidity('');
-        }
-        break;
-      case 3:
-        if (!(roomNumber >= сapacity)) {
-          selectCapacity.setCustomValidity('3 комнаты для 3 гостей, для 2 гостей или для 1 гостя');
-        } else {
-          selectCapacity.setCustomValidity('');
-        }
-        break;
-      case 100:
-        if (!(roomNumber === сapacity)) {
-          selectCapacity.setCustomValidity('не для гостей');
-        } else {
-          selectCapacity.setCustomValidity('');
-        }
+  var setCapacity = function (roomNumber, capacity) {
+    if (roomNumber === 100 & capacity !== 0) {
+      selectCapacity.setCustomValidity('не для гостей');
     }
+    if (roomNumber < capacity) {
+      selectCapacity.setCustomValidity('1 комната для 1 гостя');
+    }
+    selectCapacity.setCustomValidity('');
+    // switch (roomNumber) {
+    //   case 1:
+    //     if (!(roomNumber === capacity)) {
+    //       selectCapacity.setCustomValidity('1 комната для 1 гостя');
+    //     } else {
+    //       selectCapacity.setCustomValidity('');
+    //     }
+    //     break;
+    //   case 2:
+    //     if (!(roomNumber >= capacity)) {
+    //       selectCapacity.setCustomValidity('2 комнаты для 2 гостей или для 1 гостя');
+    //     } else {
+    //       selectCapacity.setCustomValidity('');
+    //     }
+    //     break;
+    //   case 3:
+    //     if (!(roomNumber >= capacity)) {
+    //       selectCapacity.setCustomValidity('3 комнаты для 3 гостей, для 2 гостей или для 1 гостя');
+    //     } else {
+    //       selectCapacity.setCustomValidity('');
+    //     }
+    //     break;
+    //   case 100:
+    //     if (!(roomNumber === capacity)) {
+    //       selectCapacity.setCustomValidity('не для гостей');
+    //     } else {
+    //       selectCapacity.setCustomValidity('');
+    //     }
+    // }
   };
 
   // выбирает количества комнат
-  var roomNumber = checkRoomNumber(selectRoomNumber.value);
-  var сapacity = checkCapacity(selectCapacity.value);
-  setCapacity(roomNumber, сapacity);
+  var roomNumber = +selectRoomNumber.value;
+  var capacity = checkCapacity(selectCapacity.value);
+  setCapacity(roomNumber, capacity);
   selectRoomNumber.addEventListener('change', function () {
-    roomNumber = checkRoomNumber(selectRoomNumber.value);
-    сapacity = checkCapacity(selectCapacity.value);
-    setCapacity(roomNumber, сapacity);
+    roomNumber = +selectRoomNumber.value;
+    capacity = checkCapacity(selectCapacity.value);
+    setCapacity(roomNumber, capacity);
   });
 
   // выбирает количества комнат
-  roomNumber = checkRoomNumber(selectRoomNumber.value);
-  сapacity = checkCapacity(selectCapacity.value);
-  selectCapacity.addEventListener('change', function () {
-    roomNumber = checkRoomNumber(selectRoomNumber.value);
-    сapacity = checkCapacity(selectCapacity.value);
-    setCapacity(roomNumber, сapacity);
+  roomNumber = +selectRoomNumber.value;
+  capacity = checkCapacity(selectCapacity.value);
+  selectCapacity.addEventListener('input', function () {
+    roomNumber = +selectRoomNumber.value;
+    capacity = checkCapacity(selectCapacity.value);
+    setCapacity(roomNumber, capacity);
   });
 
   // отключает элементы управления формы объявлений
-  adFormHeaderFieldset.setAttribute('disabled', 'disabled');
-  adFormElementFieldset.forEach(function (itemFieldset) {
+  adFormHeader.setAttribute('disabled', 'disabled');
+  adFormElements.forEach(function (itemFieldset) {
     itemFieldset.setAttribute('disabled', 'disabled');
   });
 
@@ -563,19 +530,19 @@
     // открывает карту объявлений
     map.classList.remove('map--faded');
     // рисует объявления на карте
-    renderMapPins(similarAds);
+    renderPins(ads);
     // включает элементы управления формы фильтра
-    mapFiltersSelect.forEach(function (itemSelect) {
+    filterSelects.forEach(function (itemSelect) {
       itemSelect.removeAttribute('disabled');
     });
-    mapFiltersFieldset.removeAttribute('disabled');
+    filterFieldset.removeAttribute('disabled');
     // включает элементы управления формы объявлений
-    adFormHeaderFieldset.removeAttribute('disabled');
-    adFormElementFieldset.forEach(function (itemFieldset) {
+    adFormHeader.removeAttribute('disabled');
+    adFormElements.forEach(function (itemFieldset) {
       itemFieldset.removeAttribute('disabled');
     });
     // убирает прозрачность формы
-    mapAdForm.classList.remove('ad-form--disabled');
+    adForm.classList.remove('ad-form--disabled');
     // устанавливает атрибут только для чтения поля адрес
     inputAddress.setAttribute('readonly', 'readonly');
   };
@@ -587,11 +554,11 @@
     var x;
     var y;
     if (isRoundPin) {
-      x = Math.floor(parseInt(xLeft.substr(0, [xLeft.length - 2]), 10) + ROUND_PIN_SIZE / 2);
-      y = Math.floor(parseInt(yTop.substr(0, [yTop.length - 2]), 10) + ROUND_PIN_SIZE / 2);
+      x = Math.floor(parseInt(xLeft.substr(0, [xLeft.length - 2]), 10) + PinSize.SIDE_LENGTH / 2);
+      y = Math.floor(parseInt(yTop.substr(0, [yTop.length - 2]), 10) + PinSize.SIDE_LENGTH / 2);
     } else {
-      x = Math.floor(parseInt(xLeft.substr(0, [xLeft.length - 2]), 10) + PIN_WIDTH / 2);
-      y = Math.floor(parseInt(yTop.substr(0, [yTop.length - 2]), 10) + PIN_HEIGHT);
+      x = Math.floor(parseInt(xLeft.substr(0, [xLeft.length - 2]), 10) + PinSize.WIDTH / 2);
+      y = Math.floor(parseInt(yTop.substr(0, [yTop.length - 2]), 10) + PinSize.HEIGHT);
     }
     inputAddress.value = x + ', ' + y;
   };
@@ -599,17 +566,15 @@
 
   // активирует страницу кликом
   mapPinMain.addEventListener('mousedown', function (evt) {
-    if (typeof evt === 'object') {
-      if (evt.button === 0) {
-        activatePage();
-        getPinCoordinates(false);
-      }
+    if (evt.button === MOUSE_LEFT_BUTTON) {
+      activatePage();
+      getPinCoordinates(false);
     }
   });
 
   // активирует страницу с клавиатуры
   mapPinMain.addEventListener('keydown', function (evt) {
-    if (evt.key === 'Enter') {
+    if (evt.key === ENTER_KEY) {
       activatePage();
       getPinCoordinates(false);
     }
