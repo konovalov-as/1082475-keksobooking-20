@@ -110,106 +110,46 @@
     changeCheckIn(selectCheckOut.value);
   });
 
-  // количество комнат и гостей
-  // проверяет количество комнат
-  // var checkRoomNumber = function (roomNumber) {
-  //   switch (roomNumber) {
-  //     case '1':
-  //       roomNumber = 1;
-  //       break;
-  //     case '2':
-  //       roomNumber = 2;
-  //       break;
-  //     case '3':
-  //       roomNumber = 3;
-  //       break;
-  //     case '100':
-  //       roomNumber = 100;
-  //       break;
-  //   }
-  //   return roomNumber;
-  // };
-
-  // проверяет количество гостей
-  var checkCapacity = function (capacity) {
-    if (capacity === 0) {
-      return 100;
-    }
-    return +capacity;
-    // switch (сapacity) {
-    //   case '1':
-    //     сapacity = 1;
-    //     break;
-    //   case '2':
-    //     сapacity = 2;
-    //     break;
-    //   case '3':
-    //     сapacity = 3;
-    //     break;
-    //   case '0':
-    //     сapacity = 100;
-    //     break;
-    // }
-    // return сapacity;
-  };
-
   // устанавливает к выбору количество доступных гостей
-  var setCapacity = function (roomNumber, capacity) {
-    if (roomNumber === 100 & capacity !== 0) {
+  var checkCapacity = function (roomNumber, capacity) {
+    if (roomNumber === '100' & capacity !== '0') {
       selectCapacity.setCustomValidity('не для гостей');
+      return;
     }
-    if (roomNumber < capacity) {
+    if (roomNumber === '1' && roomNumber < capacity || (roomNumber !== '100' && capacity === '0')) {
       selectCapacity.setCustomValidity('1 комната для 1 гостя');
+      return;
+    }
+    if (roomNumber === '2' && roomNumber < capacity || (roomNumber !== '100' && capacity === '0')) {
+      selectCapacity.setCustomValidity('2 комнаты для 2 гостей или для 1 гостя');
+      return;
+    }
+    if (roomNumber === '3' && roomNumber < capacity || (roomNumber !== '100' && capacity === '0')) {
+      selectCapacity.setCustomValidity('3 комнаты для 3 гостей, для 2 гостей или для 1 гостя');
+      return;
     }
     selectCapacity.setCustomValidity('');
-    // switch (roomNumber) {
-    //   case 1:
-    //     if (!(roomNumber === capacity)) {
-    //       selectCapacity.setCustomValidity('1 комната для 1 гостя');
-    //     } else {
-    //       selectCapacity.setCustomValidity('');
-    //     }
-    //     break;
-    //   case 2:
-    //     if (!(roomNumber >= capacity)) {
-    //       selectCapacity.setCustomValidity('2 комнаты для 2 гостей или для 1 гостя');
-    //     } else {
-    //       selectCapacity.setCustomValidity('');
-    //     }
-    //     break;
-    //   case 3:
-    //     if (!(roomNumber >= capacity)) {
-    //       selectCapacity.setCustomValidity('3 комнаты для 3 гостей, для 2 гостей или для 1 гостя');
-    //     } else {
-    //       selectCapacity.setCustomValidity('');
-    //     }
-    //     break;
-    //   case 100:
-    //     if (!(roomNumber === capacity)) {
-    //       selectCapacity.setCustomValidity('не для гостей');
-    //     } else {
-    //       selectCapacity.setCustomValidity('');
-    //     }
-    // }
   };
 
-  // выбирает количества комнат
-  var roomNumber = +selectRoomNumber.value;
-  var capacity = checkCapacity(selectCapacity.value);
-  setCapacity(roomNumber, capacity);
-  selectRoomNumber.addEventListener('change', function () {
-    roomNumber = +selectRoomNumber.value;
-    capacity = checkCapacity(selectCapacity.value);
-    setCapacity(roomNumber, capacity);
+  // проверяет количество комнат
+  var roomNumber = selectRoomNumber.value;
+  var capacity = selectCapacity.value;
+  checkCapacity(roomNumber, capacity);
+
+  selectRoomNumber.addEventListener('invalid', function () {
+    roomNumber = selectRoomNumber.value;
+    capacity = selectCapacity.value;
+    checkCapacity(roomNumber, capacity);
   });
 
-  // выбирает количества комнат
-  roomNumber = +selectRoomNumber.value;
-  capacity = checkCapacity(selectCapacity.value);
-  selectCapacity.addEventListener('input', function () {
-    roomNumber = +selectRoomNumber.value;
-    capacity = checkCapacity(selectCapacity.value);
-    setCapacity(roomNumber, capacity);
+  // проверяет количество гостей
+  roomNumber = selectRoomNumber.value;
+  capacity = selectCapacity.value;
+
+  selectCapacity.addEventListener('invalid', function () {
+    roomNumber = selectRoomNumber.value;
+    capacity = selectCapacity.value;
+    checkCapacity(roomNumber, capacity);
   });
 
   // отключает элементы управления формы объявлений
