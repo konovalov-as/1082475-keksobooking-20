@@ -179,14 +179,15 @@
   var getPinCoordinates = function (isRoundPin) {
     var xLeft = mapPinMain.style.left;
     var yTop = mapPinMain.style.top;
+    var halfPin = window.const.PinSize.SIDE_LENGTH / 2;
     var x;
     var y;
-    if (isRoundPin) {
-      x = Math.floor(parseInt(xLeft.substr(0, [xLeft.length - 2]), 10) + window.const.PinSize.SIDE_LENGTH / 2);
-      y = Math.floor(parseInt(yTop.substr(0, [yTop.length - 2]), 10) + window.const.PinSize.SIDE_LENGTH / 2);
-    } else {
-      x = Math.floor(parseInt(xLeft.substr(0, [xLeft.length - 2]), 10) + window.const.PinSize.WIDTH / 2);
-      y = Math.floor(parseInt(yTop.substr(0, [yTop.length - 2]), 10) + window.const.PinSize.HEIGHT);
+
+    x = Math.floor(parseInt(xLeft.substr(0, [xLeft.length - 2]), 10) + halfPin);
+    y = Math.floor(parseInt(yTop.substr(0, [yTop.length - 2]), 10) + halfPin);
+
+    if (!isRoundPin) {
+      y += halfPin + window.const.PinSize.HEIGHT_PIN;
     }
     window.adForm.inputAddress.value = x + ', ' + y;
   };

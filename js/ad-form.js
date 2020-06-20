@@ -89,7 +89,7 @@
     inputPrice.setAttribute('placeholder', minPrice);
   };
 
-  var minPrice = mapTypeToPrice[(selectType.value)];
+  var minPrice = mapTypeToPrice[selectType.value];
   setMinPrice(minPrice);
   selectType.addEventListener('change', function () {
     minPrice = mapTypeToPrice[(selectType.value)];
@@ -120,11 +120,11 @@
       selectCapacity.setCustomValidity('1 комната для 1 гостя');
       return;
     }
-    if (roomNumber === '2' && roomNumber < capacity || (roomNumber !== '100' && capacity === '0')) {
+    if (roomNumber === '2' && roomNumber < capacity) {
       selectCapacity.setCustomValidity('2 комнаты для 2 гостей или для 1 гостя');
       return;
     }
-    if (roomNumber === '3' && roomNumber < capacity || (roomNumber !== '100' && capacity === '0')) {
+    if (roomNumber === '3' && roomNumber < capacity) {
       selectCapacity.setCustomValidity('3 комнаты для 3 гостей, для 2 гостей или для 1 гостя');
       return;
     }
@@ -132,24 +132,27 @@
   };
 
   // проверяет количество комнат
-  var roomNumber = selectRoomNumber.value;
-  var capacity = selectCapacity.value;
-  checkCapacity(roomNumber, capacity);
+  var validateRoom = function () {
+    var roomNumber = selectRoomNumber.value;
+    var capacity = selectCapacity.value;
+    checkCapacity(roomNumber, capacity);
+  };
+  validateRoom();
 
   selectRoomNumber.addEventListener('invalid', function () {
-    roomNumber = selectRoomNumber.value;
-    capacity = selectCapacity.value;
-    checkCapacity(roomNumber, capacity);
+    validateRoom();
   });
 
-  // проверяет количество гостей
-  roomNumber = selectRoomNumber.value;
-  capacity = selectCapacity.value;
+  selectRoomNumber.addEventListener('input', function () {
+    validateRoom();
+  });
 
   selectCapacity.addEventListener('invalid', function () {
-    roomNumber = selectRoomNumber.value;
-    capacity = selectCapacity.value;
-    checkCapacity(roomNumber, capacity);
+    validateRoom();
+  });
+
+  selectCapacity.addEventListener('input', function () {
+    validateRoom();
   });
 
   // отключает элементы управления формы объявлений

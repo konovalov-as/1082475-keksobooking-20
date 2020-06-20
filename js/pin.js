@@ -33,7 +33,9 @@
   };
 
   // создает нужное количество похожих объявлений
-  for (var i = 0; i < window.const.QUANTITY_AD; i++) {
+  var adCount = 8;
+  var photoCount = 5;
+  for (var i = 0; i < adCount; i++) {
     var randomAvatar = 'img/avatars/user0' + (i + 1) + '.png';
 
     var randomNumber = window.util.getRandomNumber(1, window.const.WORDS.length - 1);
@@ -51,11 +53,11 @@
 
     var randomDescription = 'произвольная строк(а/и) подробным с описанием';
 
-    randomNumber = window.util.getRandomNumber(0, window.const.QUANTITY_PHOTO);
+    randomNumber = window.util.getRandomNumber(0, photoCount);
     var randomPhotos = window.util.getPhotoPaths(randomNumber);
 
     var randomX = window.util.getRandomNumber(0, mapWidth);
-    var randomY = window.util.getRandomNumber(window.const.TOP_BOUND_Y, window.const.BOTTOM_BOUND_Y);
+    var randomY = window.util.getRandomNumber(window.const.YBound.TOP, window.const.YBound.BOTTOM);
 
     var randomAddress = randomX + ', ' + randomY;
 
@@ -86,7 +88,7 @@
   // заполняет метку похожего объявления
   var createPin = function (ad) {
     var mapPinElement = mapPinTemplate.cloneNode(true);
-    mapPinElement.style.left = ad.location.x - window.const.PinSize.WIDTH / 2 + 'px';
+    mapPinElement.style.left = ad.location.x - window.const.PinSize.SIDE_LENGTH / 2 + 'px';
     mapPinElement.style.top = ad.location.y - window.const.PinSize.HEIGHT + 'px';
     mapPinElement.querySelector('img').src = ad.author.avatar;
     mapPinElement.querySelector('img').alt = ad.offer.title;
@@ -96,8 +98,8 @@
   // выводит метки похожих объявлений на страницу
   var renderPins = function () {
     var fragment = document.createDocumentFragment();
-    ads.forEach(function (Ad) {
-      fragment.appendChild(createPin(Ad));
+    ads.forEach(function (itemAd) {
+      fragment.appendChild(createPin(itemAd));
     });
     mapPinsBox.appendChild(fragment);
   };
