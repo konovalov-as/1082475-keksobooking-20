@@ -164,7 +164,7 @@
 
   window.adForm = {
     inputAddress: inputAddress,
-    adForm: adForm,
+    form: adForm,
     adFormHeader: adFormHeader,
     adFormElements: adFormElements,
   };

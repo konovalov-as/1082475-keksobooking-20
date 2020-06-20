@@ -154,7 +154,7 @@
       itemFieldset.removeAttribute('disabled');
     });
     // убирает прозрачность формы
-    window.adForm.adForm.classList.remove('ad-form--disabled');
+    window.adForm.form.classList.remove('ad-form--disabled');
     // устанавливает атрибут только для чтения поля адрес
     window.adForm.inputAddress.setAttribute('readonly', 'readonly');
   };
