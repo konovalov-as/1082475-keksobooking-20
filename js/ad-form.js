@@ -113,10 +113,14 @@
   // устанавливает к выбору количество доступных гостей
   var checkCapacity = function (roomNumber, capacity) {
     if (roomNumber === '100' & capacity !== '0') {
-      selectCapacity.setCustomValidity('не для гостей');
+      selectCapacity.setCustomValidity('100 комнат не для гостей');
       return;
     }
-    if (roomNumber === '1' && roomNumber < capacity || (roomNumber !== '100' && capacity === '0')) {
+    if (roomNumber !== '100' && capacity === '0') {
+      selectCapacity.setCustomValidity('Комнаты не для гостей');
+      return;
+    }
+    if (roomNumber === '1' && roomNumber < capacity) {
       selectCapacity.setCustomValidity('1 комната для 1 гостя');
       return;
     }
