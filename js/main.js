@@ -142,7 +142,7 @@
     // открывает карту объявлений
     map.classList.remove('map--faded');
     // рисует объявления на карте
-    window.pin.renderPins(window.pin.ads);
+    window.pin.renderPins();
     // включает элементы управления формы фильтра
     window.filterForm.filterSelects.forEach(function (itemSelect) {
       itemSelect.removeAttribute('disabled');

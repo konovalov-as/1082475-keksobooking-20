@@ -1,91 +1,15 @@
 'use strict';
 
 (function () {
-  var ads = []; // массив похожих объявлений
+  var ads = []; // массив объявлений
   var mapPinsBox = document.querySelector('.map__pins'); // место для вставки меток объявлений
-  var mapWidth = mapPinsBox.offsetWidth; // получает ширину карты
 
-  // создает похожее объявление
-  var getAd = function (ad) {
-    var similarAd = {
-      'author': {
-        'avatar': ad.avatar,
-      },
-      'offer': {
-        'title': ad.title,
-        'address': ad.address,
-        'price': ad.price,
-        'type': ad.type,
-        'rooms': ad.rooms,
-        'guests': ad.guests,
-        'checkin': ad.checkin,
-        'checkout': ad.checkout,
-        'features': ad.features,
-        'description': ad.description,
-        'photos': ad.photos,
-      },
-      'location': {
-        'x': ad.locationX,
-        'y': ad.locationY,
-      },
-    };
-    return similarAd;
-  };
-
-  // создает нужное количество похожих объявлений
-  var adCount = 8;
-  var photoCount = 5;
-  for (var i = 0; i < adCount; i++) {
-    var randomAvatar = 'img/avatars/user0' + (i + 1) + '.png';
-
-    var randomNumber = window.util.getRandomNumber(1, window.const.WORDS.length - 1);
-    var randomTitle = window.util.getRandomTitle(randomNumber);
-
-    var randomPrice = window.util.getRandomNumber(1, 1000);
-    var randomOfferType = window.util.getRandomElement(window.util.getRandomNumber(0, window.const.OFFER_TYPES.length - 1), window.const.OFFER_TYPES);
-    var randomRooms = window.util.getRandomNumber(1, 5);
-    var randomGuests = window.util.getRandomNumber(1, 10);
-    var randomCheckin = window.util.getRandomElement(window.util.getRandomNumber(0, window.const.REGISTRATIONS.length - 1), window.const.REGISTRATIONS);
-    var randomCheckout = window.util.getRandomElement(window.util.getRandomNumber(0, window.const.REGISTRATIONS.length - 1), window.const.REGISTRATIONS);
-
-    randomNumber = window.util.getRandomNumber(0, window.const.FEATURES.length - 1);
-    var randomFeatures = window.util.getRandomFeatures(randomNumber);
-
-    var randomDescription = 'произвольная строк(а/и) подробным с описанием';
-
-    randomNumber = window.util.getRandomNumber(0, photoCount);
-    var randomPhotos = window.util.getPhotoPaths(randomNumber);
-
-    var randomX = window.util.getRandomNumber(0, mapWidth);
-    var randomY = window.util.getRandomNumber(window.const.YBound.TOP, window.const.YBound.BOTTOM);
-
-    var randomAddress = randomX + ', ' + randomY;
-
-    var newAd = getAd({
-      avatar: randomAvatar,
-      title: randomTitle,
-      address: randomAddress,
-      price: randomPrice,
-      type: randomOfferType,
-      rooms: randomRooms,
-      guests: randomGuests,
-      checkin: randomCheckin,
-      checkout: randomCheckout,
-      features: randomFeatures,
-      description: randomDescription,
-      photos: randomPhotos,
-      locationX: randomX,
-      locationY: randomY,
-    });
-    ads.push(newAd);
-  }
-
-  // получает шаблон метки для похожего объявленья
+  // получает шаблон метки для объявленья
   var mapPinTemplate = document.querySelector('#pin')
     .content
     .querySelector('.map__pin');
 
-  // заполняет метку похожего объявления
+  // заполняет метку объявления
   var createPin = function (ad) {
     var mapPinElement = mapPinTemplate.cloneNode(true);
     mapPinElement.style.left = ad.location.x - window.const.PinSize.SIDE_LENGTH / 2 + 'px';
@@ -95,7 +19,7 @@
     return mapPinElement;
   };
 
-  // выводит метки похожих объявлений на страницу
+  // выводит меток на страницу
   var renderPins = function () {
     var fragment = document.createDocumentFragment();
     ads.forEach(function (itemAd) {
@@ -104,10 +28,24 @@
     mapPinsBox.appendChild(fragment);
   };
 
+  // получает данные с сервера
+  var onLoad = function (data) {
+    ads = data;
+  };
+  var onError = function (errorMessage) {
+    var node = document.createElement('div');
+    node.classList.add('error-message');
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
+
+
+  window.backend.load(onLoad, onError);
+  // window.backend.save('sdsdfdfffffddddgdgf');
 
   window.pin = {
     renderPins: renderPins,
-    ads: ads,
   };
 
 })();
