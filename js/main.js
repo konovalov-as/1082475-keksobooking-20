@@ -135,47 +135,45 @@
   // renderCards(similarAds[randomCard]);
   // --------------- файл card.js ---------------
 
-  // активирует страницу
+  // activates the page
   var map = document.querySelector('.map');
   var mapPinMain = document.querySelector('.map__pin--main');
   var activatePage = function () {
-    // открывает карту объявлений
+    // opens a map with ads
     map.classList.remove('map--faded');
-    // рисует объявления на карте
-    window.pin.renderPins(window.pin.ads);
-    // включает элементы управления формы фильтра
+    // turns on filter form  controls
     window.filterForm.filterSelects.forEach(function (itemSelect) {
       itemSelect.removeAttribute('disabled');
     });
     window.filterForm.filterFieldset.removeAttribute('disabled');
-    // включает элементы управления формы объявлений
+    // turns on ads form controls
     window.adForm.adFormHeader.removeAttribute('disabled');
     window.adForm.adFormElements.forEach(function (itemFieldset) {
       itemFieldset.removeAttribute('disabled');
     });
-    // убирает прозрачность формы
+    // removes form transparency
     window.adForm.form.classList.remove('ad-form--disabled');
-    // устанавливает атрибут только для чтения поля адрес
+    // sets the read-only attribute of the address field
     window.adForm.inputAddress.setAttribute('readonly', 'readonly');
   };
 
-  // активирует страницу кликом
+  // activates the page with a click
   mapPinMain.addEventListener('mousedown', function (evt) {
     if (evt.button === window.const.MOUSE_LEFT_BUTTON) {
-      activatePage();
+      activatePage(window.backend.load(onLoad, onError));
       getPinCoordinates(false);
     }
   });
 
-  // активирует страницу с клавиатуры
+  // activates the page from the keyboard
   mapPinMain.addEventListener('keydown', function (evt) {
     if (evt.key === window.const.ENTER_KEY) {
-      activatePage();
+      activatePage(window.backend.load(onLoad, onError));
       getPinCoordinates(false);
     }
   });
 
-  // получает координаты метки
+  // gets label coordinates
   var getPinCoordinates = function (isRoundPin) {
     var xLeft = mapPinMain.style.left;
     var yTop = mapPinMain.style.top;
@@ -192,5 +190,17 @@
     window.adForm.inputAddress.value = x + ', ' + y;
   };
   getPinCoordinates(true);
+
+  // receives data from the server
+  var onLoad = function (data) {
+    window.pin.renderPins(data);
+  };
+  var onError = function (errorMessage) {
+    var node = document.createElement('div');
+    node.classList.add('error-message');
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+  };
 
 })();
