@@ -1,15 +1,15 @@
 'use strict';
 
 (function () {
-  var ads = []; // массив объявлений
-  var mapPinsBox = document.querySelector('.map__pins'); // место для вставки меток объявлений
+  // block for inserting ad tags
+  var mapPinsBox = document.querySelector('.map__pins');
 
-  // получает шаблон метки для объявленья
+  // gets label template for ad
   var mapPinTemplate = document.querySelector('#pin')
     .content
     .querySelector('.map__pin');
 
-  // заполняет метку объявления
+  // creates an ad label
   var createPin = function (ad) {
     var mapPinElement = mapPinTemplate.cloneNode(true);
     mapPinElement.style.left = ad.location.x - window.const.PinSize.SIDE_LENGTH / 2 + 'px';
@@ -19,8 +19,8 @@
     return mapPinElement;
   };
 
-  // выводит меток на страницу
-  var renderPins = function () {
+  // render tags on the page
+  var renderPins = function (ads) {
     var fragment = document.createDocumentFragment();
     ads.forEach(function (itemAd) {
       fragment.appendChild(createPin(itemAd));
@@ -28,21 +28,7 @@
     mapPinsBox.appendChild(fragment);
   };
 
-  // получает данные с сервера
-  var onLoad = function (data) {
-    ads = data;
-  };
-  var onError = function (errorMessage) {
-    var node = document.createElement('div');
-    node.classList.add('error-message');
-
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
-  };
-
-
-  window.backend.load(onLoad, onError);
-  // window.backend.save('sdsdfdfffffddddgdgf');
+  // // window.backend.save('sdsdfdfffffddddgdgf');
 
   window.pin = {
     renderPins: renderPins,
