@@ -141,11 +141,7 @@
   var activatePage = function () {
     // opens a map with ads
     map.classList.remove('map--faded');
-    // turns on filter form  controls
-    window.filterForm.filterSelects.forEach(function (itemSelect) {
-      itemSelect.removeAttribute('disabled');
-    });
-    window.filterForm.filterFieldset.removeAttribute('disabled');
+
     // turns on ads form controls
     window.adForm.adFormHeader.removeAttribute('disabled');
     window.adForm.adFormElements.forEach(function (itemFieldset) {
@@ -155,12 +151,14 @@
     window.adForm.form.classList.remove('ad-form--disabled');
     // sets the read-only attribute of the address field
     window.adForm.inputAddress.setAttribute('readonly', 'readonly');
+
+    window.backend.load(onLoad, onError);
   };
 
   // activates the page with a click
   mapPinMain.addEventListener('mousedown', function (evt) {
     if (evt.button === window.const.MOUSE_LEFT_BUTTON) {
-      activatePage(window.backend.load(onLoad, onError));
+      activatePage();
       getPinCoordinates(false);
     }
   });
@@ -168,7 +166,7 @@
   // activates the page from the keyboard
   mapPinMain.addEventListener('keydown', function (evt) {
     if (evt.key === window.const.ENTER_KEY) {
-      activatePage(window.backend.load(onLoad, onError));
+      activatePage();
       getPinCoordinates(false);
     }
   });
@@ -191,10 +189,13 @@
   };
   getPinCoordinates(true);
 
-  // receives data from the server
-  var onLoad = function (data) {
-    window.pin.renderPins(data);
+  var ads;
+  // receives offers from the server
+  var onLoad = function (offers) {
+    ads = offers;
+    updateAds();
   };
+
   var onError = function (errorMessage) {
     var node = document.createElement('div');
     node.classList.add('error-message');
@@ -202,5 +203,45 @@
     node.textContent = errorMessage;
     document.body.insertAdjacentElement('afterbegin', node);
   };
+
+  // displays the first five pins
+  var PIN_COUNT = window.const.PIN_COUNT;
+  var updateAds = function () {
+    window.pin.renderPins(ads.slice(0, PIN_COUNT));
+  };
+
+  // receives select with housing type
+  var housingType = window.filterForm.form.querySelector('#housing-type');
+  var housingTypeValue = '';
+
+  // sets the by housing type filter
+  housingType.addEventListener('change', function () {
+    housingTypeValue = housingType.value;
+    var newAds = [];
+
+    ads.forEach(function (itemAd) {
+      // set the any housing type
+      if (housingTypeValue === window.const.ANY_HOUSING) {
+        newAds.push(itemAd);
+      }
+      // set the selected housing type by user
+      if (itemAd.offer.type === housingTypeValue) {
+        newAds.push(itemAd);
+      }
+    });
+
+    // receives block with pins
+    var pinBox = window.pin.mapPinsBox;
+    var pinBoxChildren = pinBox.querySelectorAll('.map__pin:not(.map__pin--main)');
+
+    // deletes pins
+    pinBoxChildren.forEach(function (itemPin) {
+      var pinChild = itemPin;
+      pinChild.parentElement.removeChild(pinChild);
+    });
+
+    // displays filtered pins
+    window.pin.renderPins(newAds.slice(0, PIN_COUNT));
+  });
 
 })();

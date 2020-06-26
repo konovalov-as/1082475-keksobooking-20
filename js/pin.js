@@ -26,12 +26,14 @@
       fragment.appendChild(createPin(itemAd));
     });
     mapPinsBox.appendChild(fragment);
+    window.filterForm.turnOnFilter();
   };
 
   // // window.backend.save('sdsdfdfffffddddgdgf');
 
   window.pin = {
     renderPins: renderPins,
+    mapPinsBox: mapPinsBox,
   };
 
 })();
