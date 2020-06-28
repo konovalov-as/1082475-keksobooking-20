@@ -150,17 +150,20 @@
         // gets an object index for an ad card
         var indexAd = parseInt(evt.target.attributes['data-index-ad'].value, 10);
 
+        var clientX = '';
+        var clientY = '';
+
         // only one ad card can be opened at the time
         if (cardBox.childElementCount === window.const.MAP_ELEMENT_CONT) {
-          var clientX = evt.clientX;
-          var clientY = evt.clientY;
+          clientX = evt.clientX;
+          clientY = evt.clientY;
           renderCards(ads[indexAd], clientX, clientY);
           closeCard();
         } else {
           var cardAd = document.querySelector('.map .map__card');
           cardAd.parentElement.removeChild(cardAd);
-          var clientX = evt.target.offsetLeft;
-          var clientY = evt.target.offsetLeft;
+          clientX = evt.target.offsetLeft;
+          clientY = evt.target.offsetLeft;
           renderCards(ads[indexAd], clientX, clientY);
           closeCard();
         }
