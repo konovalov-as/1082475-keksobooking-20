@@ -82,7 +82,7 @@
   var housingType = window.filterForm.form.querySelector('#housing-type');
   var housingTypeValue = '';
 
-  // sets the by housing type filter
+  // sets the housing type filter
   housingType.addEventListener('change', function () {
     housingTypeValue = housingType.value;
     var newAds = [];

@@ -30,7 +30,8 @@
     window.filterForm.turnOnFilter();
   };
 
-  // // window.backend.save('sdsdfdfffffddddgdgf');
+  // window.backend.save('sdsdfdfffffddddgdgf');
+
 
   window.pin = {
     renderPins: renderPins,
