@@ -1,10 +1,9 @@
 'use strict';
 
+// creates ad cards
 (function () {
-  // creates an ad card
-
   // gets a block to insert an ad card
-  var mapCard = document.querySelector('.map');
+  var cardBox = document.querySelector('.map');
 
   // gets a card template for an ad card
   var cardTemplate = document.querySelector('#card')
@@ -12,7 +11,7 @@
     .querySelector('.map__card');
 
   // gets a element before which an ad card will be inserted
-  var mapFiltersContainer = document.querySelector('.map__filters-container');
+  var filtersContainer = document.querySelector('.map__filters-container');
 
   // gets alias housing type
   var mapHousingTypeToAlias = {
@@ -57,14 +56,14 @@
       }
     });
 
-    var ulPopupFeatures = cardElement.querySelector('.popup__features');
-    var featureChildren = ulPopupFeatures.children;
+    var featureBox = cardElement.querySelector('.popup__features');
+    var featureChildren = featureBox.children;
 
     if (offerFeatures.length === 0) {
-      ulPopupFeatures.parentElement.removeChild(ulPopupFeatures);
+      featureBox.parentElement.removeChild(featureBox);
     } else {
-      for (var m = featureChildren.length - 1; m >= 0; m--) {
-        var featureChild = featureChildren[m];
+      for (var i = featureChildren.length - 1; i >= 0; i--) {
+        var featureChild = featureChildren[i];
         if (featureChild.textContent === '') {
           featureChild.parentElement.removeChild(featureChild);
         }
@@ -82,19 +81,23 @@
   // displays photos in popup
   var renderPopupPhotos = function (photos, cardElement) {
     // gets block to insert photos
-    var popupPhotos = cardElement.querySelector('.popup__photos');
+    var popupPhotoBox = cardElement.querySelector('.popup__photos');
 
     var fragment = document.createDocumentFragment();
     photos.forEach(function (itemPhoto) {
       fragment.appendChild(createPopupPhoto(itemPhoto, cardElement));
     });
-    popupPhotos.appendChild(fragment);
+
+    // cleans a container for photos
+    popupPhotoBox.textContent = '';
+    // inserts photos into a container
+    popupPhotoBox.appendChild(fragment);
   };
 
   // creates an ad card
   var createCard = function (ad, clientX, clientY) {
     // gets the window width
-    var windowWidth = window.clientWidth;
+    var windowWidth = document.documentElement.clientWidth;
 
     // gets map width
     var mapWidth = window.pin.mapPinsBox.offsetWidth;
@@ -103,8 +106,8 @@
     // fills in an ad card template
     var cardElement = cardTemplate.cloneNode(true);
 
-    cardElement.style.left = clientX - mapLetMargin + 50 + 'px';
-    cardElement.style.top = clientY + 50 + 'px';
+    cardElement.style.left = clientX - mapLetMargin + 'px';
+    cardElement.style.top = clientY + 'px';
 
     cardElement.querySelector('.popup__title').textContent = ad.offer.title;
     cardElement.querySelector('.popup__text--address').textContent = ad.offer.address;
@@ -131,7 +134,7 @@
   var renderCards = function (ad, clientX, clientY) {
     var fragment = document.createDocumentFragment();
     fragment.appendChild(createCard(ad, clientX, clientY));
-    mapCard.insertBefore(fragment, mapFiltersContainer);
+    cardBox.insertBefore(fragment, filtersContainer);
   };
 
   // opens an ad card
@@ -141,17 +144,23 @@
 
     // ad card opening handler
     var onPinPress = function (evt) {
+      // selects only pins
       if (evt.target && evt.target.matches('button[type=button]')) {
-        var clientX = evt.clientX;
-        var clientY = evt.clientY;
+
+        // gets an object index for an ad card
         var indexAd = parseInt(evt.target.attributes['data-index-ad'].value, 10);
 
-        if (mapCard.childElementCount === window.const.MAP_ELEMENT_CONT) {
+        // only one ad card can be opened at the time
+        if (cardBox.childElementCount === window.const.MAP_ELEMENT_CONT) {
+          var clientX = evt.clientX;
+          var clientY = evt.clientY;
           renderCards(ads[indexAd], clientX, clientY);
           closeCard();
         } else {
           var cardAd = document.querySelector('.map .map__card');
           cardAd.parentElement.removeChild(cardAd);
+          var clientX = evt.target.offsetLeft;
+          var clientY = evt.target.offsetLeft;
           renderCards(ads[indexAd], clientX, clientY);
           closeCard();
         }
