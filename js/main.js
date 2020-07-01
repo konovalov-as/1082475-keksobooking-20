@@ -4,6 +4,8 @@
   // activates the page
   var map = document.querySelector('.map');
   var mapPinMain = document.querySelector('.map__pin--main');
+
+  var isActivePage = true;
   var activatePage = function () {
     // opens a map with ads
     map.classList.remove('map--faded');
@@ -19,12 +21,15 @@
     window.adForm.inputAddress.setAttribute('readonly', 'readonly');
 
     window.backend.load(onLoad, onError);
+    isActivePage = false;
   };
 
   // activates the page with a click
   mapPinMain.addEventListener('mousedown', function (evt) {
     if (evt.button === window.const.MOUSE_LEFT_BUTTON) {
-      activatePage();
+      if (isActivePage) {
+        activatePage();
+      }
       getPinCoordinates(false);
     }
   });
@@ -32,7 +37,9 @@
   // activates the page from the keyboard
   mapPinMain.addEventListener('keydown', function (evt) {
     if (evt.key === window.const.Key.ENTER) {
-      activatePage();
+      if (isActivePage) {
+        activatePage();
+      }
       getPinCoordinates(false);
     }
   });
@@ -75,7 +82,7 @@
   var updateAds = function () {
     var filterAds = ads.slice(0, PIN_COUNT);
     window.pin.renderPins(filterAds);
-    window.card.openCard(filterAds);
+    window.card.addCardOpenHandler(filterAds);
   };
 
   // receives select with housing type
@@ -111,7 +118,8 @@
     // displays filtered pins
     var filterAds = newAds.slice(0, PIN_COUNT);
     window.pin.renderPins(filterAds);
-    window.card.openCard(filterAds);
+    window.card.addCardOpenHandler(filterAds);
+    window.card.closeCard();
   });
 
 })();

@@ -72,20 +72,17 @@
   };
 
   // creates photos in popup
-  var createPopupPhoto = function (itemPhoto, cardElement) {
-    var popupPhoto = cardElement.querySelector('.popup__photo').cloneNode(true);
+  var createPopupPhoto = function (itemPhoto, popupPhotoBox) {
+    var popupPhoto = popupPhotoBox.querySelector('.popup__photo').cloneNode(true);
     popupPhoto.src = itemPhoto;
     return popupPhoto;
   };
 
   // displays photos in popup
-  var renderPopupPhotos = function (photos, cardElement) {
-    // gets block to insert photos
-    var popupPhotoBox = cardElement.querySelector('.popup__photos');
-
+  var renderPopupPhotos = function (photos, popupPhotoBox) {
     var fragment = document.createDocumentFragment();
     photos.forEach(function (itemPhoto) {
-      fragment.appendChild(createPopupPhoto(itemPhoto, cardElement));
+      fragment.appendChild(createPopupPhoto(itemPhoto, popupPhotoBox));
     });
 
     // cleans a container for photos
@@ -95,19 +92,9 @@
   };
 
   // creates an ad card
-  var createCard = function (ad, clientX, clientY) {
-    // gets the window width
-    var windowWidth = document.documentElement.clientWidth;
-
-    // gets map width
-    var mapWidth = window.pin.mapPinsBox.offsetWidth;
-    var mapLetMargin = (windowWidth - mapWidth) / 2;
-
+  var createCard = function (ad) {
     // fills in an ad card template
     var cardElement = cardTemplate.cloneNode(true);
-
-    cardElement.style.left = clientX - mapLetMargin + 'px';
-    cardElement.style.top = clientY + 'px';
 
     cardElement.querySelector('.popup__title').textContent = ad.offer.title;
     cardElement.querySelector('.popup__text--address').textContent = ad.offer.address;
@@ -123,7 +110,8 @@
 
     cardElement.querySelector('.popup__description').textContent = ad.offer.description;
 
-    renderPopupPhotos(ad.offer.photos, cardElement);
+    var popupPhotoBox = cardElement.querySelector('.popup__photos');
+    renderPopupPhotos(ad.offer.photos, popupPhotoBox);
 
     cardElement.querySelector('.popup__avatar').src = ad.author.avatar;
 
@@ -131,75 +119,78 @@
   };
 
   // displays ad cards
-  var renderCards = function (ad, clientX, clientY) {
+  var renderCards = function (ad) {
     var fragment = document.createDocumentFragment();
-    fragment.appendChild(createCard(ad, clientX, clientY));
+    fragment.appendChild(createCard(ad));
     cardBox.insertBefore(fragment, filtersContainer);
   };
 
   // opens an ad card
-  var openCard = function (ads) {
+  var onContainerPinPress = function (evt, ads) {
+    // selects only pins
+    if (evt.target && evt.target.matches('button[type=button]') || evt.target.matches('button[type=button] img')) {
 
+      // gets an object index for an ad card
+      var indexAd;
+      var imgPath = '';
+
+      // gets image path of avatar
+      if (evt.target.matches('button[type=button]')) {
+        imgPath = evt.target.children[0].attributes['src'].value;
+      } else {
+        imgPath = evt.target.attributes['src'].value;
+      }
+
+      // search of an object index for opening a card
+      ads.forEach(function (itemAd, index) {
+        if (itemAd.author.avatar === imgPath) {
+          indexAd = index;
+        }
+      });
+
+      // only one ad card can be opened at the time
+      if (cardBox.childElementCount === window.const.MAP_ELEMENT_CONT) {
+        renderCards(ads[indexAd]);
+        addCardCloseHandler();
+      } else {
+        var cardAd = document.querySelector('.map .map__card');
+        cardAd.parentElement.removeChild(cardAd);
+        renderCards(ads[indexAd]);
+        addCardCloseHandler();
+      }
+
+    }
+  };
+
+  // adds a card open handler
+  var addCardOpenHandler = function (ads) {
     var pinBox = window.pin.mapPinsBox;
 
-    // ad card opening handler
-    var onPinPress = function (evt) {
-      // selects only pins
-      if (evt.target && evt.target.matches('button[type=button]')) {
-
-        // gets an object index for an ad card
-        var indexAd = parseInt(evt.target.attributes['data-index-ad'].value, 10);
-
-        var clientX = '';
-        var clientY = '';
-
-        // only one ad card can be opened at the time
-        if (cardBox.childElementCount === window.const.MAP_ELEMENT_CONT) {
-          clientX = evt.clientX;
-          clientY = evt.clientY;
-          renderCards(ads[indexAd], clientX, clientY);
-          closeCard();
-        } else {
-          var cardAd = document.querySelector('.map .map__card');
-          cardAd.parentElement.removeChild(cardAd);
-          clientX = evt.target.offsetLeft;
-          clientY = evt.target.offsetLeft;
-          renderCards(ads[indexAd], clientX, clientY);
-          closeCard();
-        }
-
-      }
-    };
-
     // adds a mouse click handler
-    pinBox.addEventListener('click', onPinPress);
-
-    // adds Enter key handler
-    document.addEventListener('keydown', function (evt) {
-      if (evt.key === window.const.Key.ENTER) {
-        onPinPress(evt);
-      }
+    pinBox.addEventListener('click', function (evt) {
+      onContainerPinPress(evt, ads);
     });
-
   };
 
   // closes an ad card
   var closeCard = function () {
+    var cardAd = document.querySelector('.map .map__card');
+    if (cardAd) {
+      cardAd.parentElement.removeChild(cardAd);
+    }
+  };
+
+  // adds a card close handler
+  var addCardCloseHandler = function () {
     var closeCardButton = document.querySelector('.map__card .popup__close');
 
     // adds a mouse click handler
-    closeCardButton.addEventListener('click', function () {
-      var cardAd = document.querySelector('.map .map__card');
-      cardAd.parentElement.removeChild(cardAd);
-    });
+    closeCardButton.addEventListener('click', closeCard);
 
     // adds Esc key handler
     document.addEventListener('keydown', function (evt) {
       if (evt.key === window.const.Key.ESCAPE) {
-        var cardAd = document.querySelector('.map .map__card');
-        if (cardAd !== null) {
-          cardAd.parentElement.removeChild(cardAd);
-        }
+        closeCard();
       }
     });
 
@@ -207,7 +198,8 @@
 
 
   window.card = {
-    openCard: openCard,
+    addCardOpenHandler: addCardOpenHandler,
+    closeCard: closeCard,
   };
 
 })();

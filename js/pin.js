@@ -10,9 +10,8 @@
     .querySelector('.map__pin');
 
   // creates an ad label
-  var createPin = function (ad, index) {
+  var createPin = function (ad) {
     var mapPinElement = mapPinTemplate.cloneNode(true);
-    mapPinElement.setAttribute('data-index-ad', index);
     mapPinElement.style.left = ad.location.x - window.const.PinSize.SIDE_LENGTH / 2 + 'px';
     mapPinElement.style.top = ad.location.y - window.const.PinSize.HEIGHT + 'px';
     mapPinElement.querySelector('img').src = ad.author.avatar;
