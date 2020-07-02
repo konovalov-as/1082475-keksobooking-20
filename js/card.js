@@ -120,16 +120,20 @@
 
       // gets an object index for an ad card
       var indexAd;
-      var imgPath = '';
+      // var imgPath = '';
+      var adTitle = '';
       var activePin = '';
 
       // gets image path of avatar
+      // gets an ad title
       if (evt.target.matches('.map__pin:not(.map__pin--main)')) {
-        imgPath = evt.target.children[0].attributes['src'].value;
+        // imgPath = evt.target.children[0].attributes['src'].value;
+        adTitle = evt.target.children[0].attributes['alt'].value;
         activePin = evt.target;
       }
       if (evt.target.matches('.map__pin:not(.map__pin--main) img')) {
-        imgPath = evt.target.attributes['src'].value;
+        // imgPath = evt.target.attributes['src'].value;
+        adTitle = evt.target.attributes['alt'].value;
         activePin = evt.target.parentElement;
       }
 
@@ -141,7 +145,7 @@
       // });
 
       for (var i = 0; i < ads.length; i++) {
-        if (ads[i].author.avatar === imgPath) {
+        if (ads[i].offer.title === adTitle) {
           indexAd = i;
           break;
         }
