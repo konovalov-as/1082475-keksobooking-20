@@ -34,26 +34,7 @@
   // gets an alias of all available features in the ad
   var getAllAvailableFeatures = function (offerFeatures, cardElement) {
     offerFeatures.forEach(function (itemFeature) {
-      switch (itemFeature) {
-        case 'wifi':
-          cardElement.querySelector('.popup__feature--wifi').textContent = mapFeaturesToAlias[itemFeature];
-          break;
-        case 'dishwasher':
-          cardElement.querySelector('.popup__feature--dishwasher').textContent = mapFeaturesToAlias[itemFeature];
-          break;
-        case 'parking':
-          cardElement.querySelector('.popup__feature--parking').textContent = mapFeaturesToAlias[itemFeature];
-          break;
-        case 'washer':
-          cardElement.querySelector('.popup__feature--washer').textContent = mapFeaturesToAlias[itemFeature];
-          break;
-        case 'elevator':
-          cardElement.querySelector('.popup__feature--elevator').textContent = mapFeaturesToAlias[itemFeature];
-          break;
-        case 'conditioner':
-          cardElement.querySelector('.popup__feature--conditioner').textContent = mapFeaturesToAlias[itemFeature];
-          break;
-      }
+      cardElement.querySelector('.popup__feature--' + itemFeature).textContent = mapFeaturesToAlias[itemFeature];
     });
 
     var featureBox = cardElement.querySelector('.popup__features');
@@ -125,41 +106,63 @@
     cardBox.insertBefore(fragment, filtersContainer);
   };
 
+  var removeActivePin = function () {
+    var activePins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    activePins.forEach(function (activePin) {
+      activePin.classList.remove('map__pin--active');
+    });
+  };
+
   // opens an ad card
   var onContainerPinPress = function (evt, ads) {
     // selects only pins
-    if (evt.target && evt.target.matches('button[type=button]') || evt.target.matches('button[type=button] img')) {
+    if (evt.target && evt.target.matches('.map__pin:not(.map__pin--main)') || evt.target.matches('.map__pin:not(.map__pin--main) img')) {
 
       // gets an object index for an ad card
       var indexAd;
       var imgPath = '';
+      var activePin = '';
 
       // gets image path of avatar
-      if (evt.target.matches('button[type=button]')) {
+      if (evt.target.matches('.map__pin:not(.map__pin--main)')) {
         imgPath = evt.target.children[0].attributes['src'].value;
-      } else {
+        activePin = evt.target;
+      }
+      if (evt.target.matches('.map__pin:not(.map__pin--main) img')) {
         imgPath = evt.target.attributes['src'].value;
+        activePin = evt.target.parentElement;
       }
 
       // search of an object index for opening a card
-      ads.forEach(function (itemAd, index) {
-        if (itemAd.author.avatar === imgPath) {
-          indexAd = index;
+      // ads.forEach(function (itemAd, index) {
+      //   if (itemAd.author.avatar === imgPath) {
+      //     indexAd = index;
+      //   }
+      // });
+
+      for (var i = 0; i < ads.length; i++) {
+        if (ads[i].author.avatar === imgPath) {
+          indexAd = i;
+          break;
         }
-      });
+      }
 
       // only one ad card can be opened at the time
       if (cardBox.childElementCount === window.const.MAP_ELEMENT_CONT) {
         renderCards(ads[indexAd]);
+        activePin.classList.add('map__pin--active');
         addCardCloseHandler();
       } else {
         var cardAd = document.querySelector('.map .map__card');
         cardAd.parentElement.removeChild(cardAd);
         renderCards(ads[indexAd]);
+        removeActivePin();
+        activePin.classList.add('map__pin--active');
         addCardCloseHandler();
       }
 
     }
+
   };
 
   // adds a card open handler
@@ -178,6 +181,7 @@
     if (cardAd) {
       cardAd.parentElement.removeChild(cardAd);
     }
+    removeActivePin();
   };
 
   // adds a card close handler
