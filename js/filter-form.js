@@ -22,9 +22,6 @@
 
 
   window.filterForm = {
-    form: filterForm,
-    filterSelects: filterSelects,
-    filterFieldset: filterFieldset,
     turnOnFilter: turnOnFilter,
   };
 

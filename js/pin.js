@@ -22,14 +22,15 @@
   // render tags on the page
   var renderPins = function (ads) {
     var fragment = document.createDocumentFragment();
-    ads.forEach(function (itemAd) {
-      fragment.appendChild(createPin(itemAd));
+    ads.forEach(function (itemAd, indexAd) {
+      fragment.appendChild(createPin(itemAd, indexAd));
     });
     mapPinsBox.appendChild(fragment);
     window.filterForm.turnOnFilter();
   };
 
-  // // window.backend.save('sdsdfdfffffddddgdgf');
+  // window.backend.save('sdsdfdfffffddddgdgf');
+
 
   window.pin = {
     renderPins: renderPins,

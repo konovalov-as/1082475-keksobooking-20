@@ -1,12 +1,12 @@
 'use strict';
 
 (function () {
-  // форма с объявлениями
+  // ad form
   var adForm = document.querySelector('.ad-form');
   var adFormHeader = adForm.querySelector('.ad-form-header');
   var adFormElements = adForm.querySelectorAll('.ad-form__element');
 
-  // поля формы с объявлениями
+  // fields of ad form
   var inputAddress = adForm.querySelector('#address');
   var inputTitle = adForm.querySelector('#title');
   var inputPrice = adForm.querySelector('#price');
@@ -16,15 +16,18 @@
   var selectRoomNumber = adForm.querySelector('#room_number');
   var selectCapacity = adForm.querySelector('#capacity');
 
-  // валидация полей
-  // заголовок объявления
+  // fields validation
+  // header ad
+  var minTitleLength = inputTitle.minLength;
+  var maxTitleLength = inputTitle.maxLength;
+
   inputTitle.addEventListener('invalid', function () {
     if (inputTitle.validity.tooShort) {
-      inputTitle.setCustomValidity('Заголовок должен состоять минимум из 30-ти символов');
+      inputTitle.setCustomValidity('Пожалуйста, не меньше ' + minTitleLength);
       return;
     }
     if (inputTitle.validity.tooLong) {
-      inputTitle.setCustomValidity('Заголовок не должен превышать 100 символов');
+      inputTitle.setCustomValidity('Пожалуйста, не меньше ' + maxTitleLength);
       return;
     }
     if (inputTitle.validity.valueMissing) {
@@ -34,24 +37,21 @@
     inputTitle.setCustomValidity('');
   });
 
-  var minTitleLength = inputTitle.minLength;
-  var maxTitleLength = inputTitle.maxLength;
-
   inputTitle.addEventListener('input', function () {
     var valueLength = inputTitle.value.length;
 
     if (valueLength < minTitleLength) {
-      inputTitle.setCustomValidity('Ещё ' + (minTitleLength - valueLength) + ' символов');
+      inputTitle.setCustomValidity('Ещё ' + (minTitleLength - valueLength) + ' символ(ов/а)');
       return;
     }
     if (valueLength > maxTitleLength) {
-      inputTitle.setCustomValidity('Удалите лишние ' + (valueLength - maxTitleLength) + ' символов');
+      inputTitle.setCustomValidity('Удалите лишние ' + (valueLength - maxTitleLength) + ' символ(ов/а)');
       return;
     }
     inputTitle.setCustomValidity('');
   });
 
-  // цена за ночь
+  // price for night
   var validatePrice = function () {
     if (inputPrice.validity.valueMissing) {
       inputPrice.setCustomValidity('Обязательное поле');
@@ -63,6 +63,10 @@
     }
     if (inputPrice.validity.rangeUnderflow) {
       inputPrice.setCustomValidity('Пожалуйста, не меньше ' + inputPrice.min);
+      return;
+    }
+    if (inputPrice.validity.rangeOverflow) {
+      inputPrice.setCustomValidity('Пожалуйста, не больше ' + inputPrice.max);
       return;
     }
     inputPrice.setCustomValidity('');
@@ -83,20 +87,23 @@
     palace: 10000,
   };
 
-  // устанавливает минимальное значения поля и плейсхолдера 'цена за ночь'
+  // sets the minimum field and placeholder 'price for night'
   var setMinPrice = function (minPrice) {
     inputPrice.setAttribute('min', minPrice);
     inputPrice.setAttribute('placeholder', minPrice);
   };
 
+  // when opening page
   var minPrice = mapTypeToPrice[selectType.value];
   setMinPrice(minPrice);
+
+  // when changing the housing type
   selectType.addEventListener('change', function () {
-    minPrice = mapTypeToPrice[(selectType.value)];
+    minPrice = mapTypeToPrice[selectType.value];
     setMinPrice(minPrice);
   });
 
-  // время заезда и время выезда
+  // checkin and checkout
   var changeCheckIn = function (checkIn) {
     selectCheckIn.value = checkIn;
   };
@@ -110,8 +117,8 @@
     changeCheckIn(selectCheckOut.value);
   });
 
-  // устанавливает к выбору количество доступных гостей
-  var checkCapacity = function (roomNumber, capacity) {
+  // checks the number of guests with the number of rooms
+  var validateCapacity = function (roomNumber, capacity) {
     if (roomNumber === '100' & capacity !== '0') {
       selectCapacity.setCustomValidity('100 комнат не для гостей');
       return;
@@ -135,31 +142,23 @@
     selectCapacity.setCustomValidity('');
   };
 
-  // проверяет количество комнат
+  // checks the number of rooms
   var validateRoom = function () {
     var roomNumber = selectRoomNumber.value;
     var capacity = selectCapacity.value;
-    checkCapacity(roomNumber, capacity);
+    validateCapacity(roomNumber, capacity);
   };
   validateRoom();
 
-  selectRoomNumber.addEventListener('invalid', function () {
+  selectRoomNumber.addEventListener('change', function () {
     validateRoom();
   });
 
-  selectRoomNumber.addEventListener('input', function () {
+  selectCapacity.addEventListener('change', function () {
     validateRoom();
   });
 
-  selectCapacity.addEventListener('invalid', function () {
-    validateRoom();
-  });
-
-  selectCapacity.addEventListener('input', function () {
-    validateRoom();
-  });
-
-  // отключает элементы управления формы объявлений
+  // disables ad form controls
   adFormHeader.setAttribute('disabled', 'disabled');
   adFormElements.forEach(function (itemFieldset) {
     itemFieldset.setAttribute('disabled', 'disabled');
