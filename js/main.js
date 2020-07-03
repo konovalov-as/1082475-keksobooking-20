@@ -82,12 +82,21 @@
   var updateAds = function () {
     var filterAds = ads.slice(0, PIN_COUNT);
     window.pin.renderPins(filterAds);
-    window.card.addCardOpenHandler(filterAds);
+    window.card.onCardOpen(filterAds);
   };
 
   // receives select with housing type
-  var housingType = window.filterForm.form.querySelector('#housing-type');
+  var filterForm = document.querySelector('.map__filters');
+  var housingType = filterForm.querySelector('#housing-type');
   var housingTypeValue = '';
+
+  var mapHousingTypeToValue = {
+    // any: 'any',
+    palace: 'palace',
+    flat: 'flat',
+    house: 'house',
+    bungalo: 'bungalo',
+  };
 
   // sets the housing type filter
   housingType.addEventListener('change', function () {
@@ -95,12 +104,13 @@
     var newAds = [];
 
     ads.forEach(function (itemAd) {
+      var mapHousingType = mapHousingTypeToValue[itemAd.offer.type];
+
       // set the any housing type
       if (housingTypeValue === window.const.ANY_HOUSING) {
         newAds.push(itemAd);
       }
-      // set the selected housing type by user
-      if (itemAd.offer.type === housingTypeValue) {
+      if (housingTypeValue === mapHousingType) {
         newAds.push(itemAd);
       }
     });
@@ -118,7 +128,9 @@
     // displays filtered pins
     var filterAds = newAds.slice(0, PIN_COUNT);
     window.pin.renderPins(filterAds);
-    window.card.addCardOpenHandler(filterAds);
+    // var pinBox = map.querySelector('.map__pins');
+    // pinBox.removeEventListener('click', window.card.openCard);
+    window.card.onCardOpen(filterAds);
     window.card.closeCard();
   });
 

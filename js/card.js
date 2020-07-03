@@ -100,17 +100,15 @@
   };
 
   // displays ad cards
-  var renderCards = function (ad) {
-    var fragment = document.createDocumentFragment();
-    fragment.appendChild(createCard(ad));
-    cardBox.insertBefore(fragment, filtersContainer);
+  var renderCard = function (ad) {
+    cardBox.insertBefore(createCard(ad), filtersContainer);
   };
 
   var removeActivePin = function () {
-    var activePins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
-    activePins.forEach(function (activePin) {
+    var activePin = document.querySelector('.map__pin--active');
+    if (activePin) {
       activePin.classList.remove('map__pin--active');
-    });
+    }
   };
 
   // opens an ad card
@@ -118,65 +116,47 @@
     // selects only pins
     if (evt.target && evt.target.matches('.map__pin:not(.map__pin--main)') || evt.target.matches('.map__pin:not(.map__pin--main) img')) {
 
-      // gets an object index for an ad card
-      var indexAd;
-      // var imgPath = '';
-      var adTitle = '';
-      var activePin = '';
-
-      // gets image path of avatar
       // gets an ad title
+      var adTitle = evt.target.alt;
+      var activePin = evt.target;
+
       if (evt.target.matches('.map__pin:not(.map__pin--main)')) {
-        // imgPath = evt.target.children[0].attributes['src'].value;
-        adTitle = evt.target.children[0].attributes['alt'].value;
-        activePin = evt.target;
-      }
-      if (evt.target.matches('.map__pin:not(.map__pin--main) img')) {
-        // imgPath = evt.target.attributes['src'].value;
-        adTitle = evt.target.attributes['alt'].value;
-        activePin = evt.target.parentElement;
+        adTitle = evt.target.children[0].alt;
       }
 
-      // search of an object index for opening a card
-      // ads.forEach(function (itemAd, index) {
-      //   if (itemAd.author.avatar === imgPath) {
-      //     indexAd = index;
-      //   }
-      // });
-
-      for (var i = 0; i < ads.length; i++) {
-        if (ads[i].offer.title === adTitle) {
-          indexAd = i;
-          break;
+      // gets an object index for an ad card
+      var indexAd = ads.findIndex(function (itemAd, index) {
+        if (itemAd.offer.title === adTitle) {
+          return index + 1;
         }
-      }
+        return false;
+      });
 
       // only one ad card can be opened at the time
-      if (cardBox.childElementCount === window.const.MAP_ELEMENT_CONT) {
-        renderCards(ads[indexAd]);
+      if (cardBox.childElementCount === window.const.MAP_BLOCK_ELEMENT_CONT) {
+        renderCard(ads[indexAd]);
         activePin.classList.add('map__pin--active');
-        addCardCloseHandler();
-      } else {
-        var cardAd = document.querySelector('.map .map__card');
-        cardAd.parentElement.removeChild(cardAd);
-        renderCards(ads[indexAd]);
-        removeActivePin();
-        activePin.classList.add('map__pin--active');
-        addCardCloseHandler();
+        onCardClose();
+        return;
       }
-
+      var cardAd = document.querySelector('.map .map__card');
+      cardAd.parentElement.removeChild(cardAd);
+      renderCard(ads[indexAd]);
+      removeActivePin();
+      activePin.classList.add('map__pin--active');
+      onCardClose();
     }
-
   };
 
+  var pinBox = document.querySelector('.map__pins');
   // adds a card open handler
-  var addCardOpenHandler = function (ads) {
-    var pinBox = window.pin.mapPinsBox;
+  var onCardOpen = function (ads) {
 
     // adds a mouse click handler
     pinBox.addEventListener('click', function (evt) {
       onContainerPinPress(evt, ads);
     });
+
   };
 
   // closes an ad card
@@ -189,7 +169,7 @@
   };
 
   // adds a card close handler
-  var addCardCloseHandler = function () {
+  var onCardClose = function () {
     var closeCardButton = document.querySelector('.map__card .popup__close');
 
     // adds a mouse click handler
@@ -201,12 +181,11 @@
         closeCard();
       }
     });
-
   };
 
 
   window.card = {
-    addCardOpenHandler: addCardOpenHandler,
+    onCardOpen: onCardOpen,
     closeCard: closeCard,
   };
 

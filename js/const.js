@@ -4,7 +4,7 @@
   var MOUSE_LEFT_BUTTON = 0;
   var PIN_COUNT = 5;
   var ANY_HOUSING = 'any';
-  var MAP_ELEMENT_CONT = 2;
+  var MAP_BLOCK_ELEMENT_CONT = 2;
   var PinSize = {
     SIDE_LENGTH: 62,
     HEIGHT: 84,
@@ -31,7 +31,7 @@
     MOUSE_LEFT_BUTTON: MOUSE_LEFT_BUTTON,
     PIN_COUNT: PIN_COUNT,
     ANY_HOUSING: ANY_HOUSING,
-    MAP_ELEMENT_CONT: MAP_ELEMENT_CONT,
+    MAP_BLOCK_ELEMENT_CONT: MAP_BLOCK_ELEMENT_CONT,
     PinSize: PinSize,
     YBound: YBound,
     Url: Url,
