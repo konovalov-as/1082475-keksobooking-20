@@ -15,7 +15,7 @@
     BOTTOM: 630,
   };
   var Url = {
-    POST: '',
+    POST: 'https://javascript.pages.academy/keksobooking',
     GET: 'https://javascript.pages.academy/keksobooking/data',
   };
   var StatusCode = {

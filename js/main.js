@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var adForm = window.adForm.form;
+
   // activates the page
   var map = document.querySelector('.map');
   var mapPinMain = document.querySelector('.map__pin--main');
@@ -128,10 +130,79 @@
     // displays filtered pins
     var filterAds = newAds.slice(0, PIN_COUNT);
     window.pin.renderPins(filterAds);
-    // var pinBox = map.querySelector('.map__pins');
-    // pinBox.removeEventListener('click', window.card.openCard);
     window.card.onCardOpen(filterAds);
-    window.card.closeCard();
   });
+
+  // gets a block to insert messages
+  var main = document.querySelector('main');
+
+  // gets a success message template
+  var successMessage = document.querySelector('#success')
+    .content
+    .querySelector('.success');
+
+  // gets a error message template
+  var successError = document.querySelector('#error')
+    .content
+    .querySelector('.error');
+
+  // successful form submission
+  var onFormLoad = function () {
+    renderMessage(successMessage);
+
+    // message close handlers
+    document.addEventListener('keydown', function (evt) {
+      if (evt.key === window.const.Key.ESCAPE) {
+        var child = main.querySelector('.success');
+        if (child) {
+          child.parentElement.removeChild(child);
+        }
+      }
+    });
+
+    var successBlock = main.querySelector('.success');
+    successBlock.addEventListener('click', function (evt) {
+      if (evt.target && evt.target.matches('.success')) {
+        successBlock.parentElement.removeChild(successBlock);
+      }
+    });
+  };
+
+  // error form submission
+  var onFormError = function () {
+    renderMessage(successError);
+
+    // message close handlers
+    document.addEventListener('keydown', function (evt) {
+      if (evt.key === window.const.Key.ESCAPE) {
+        var child = main.querySelector('.error');
+        if (child) {
+          child.parentElement.removeChild(child);
+        }
+      }
+    });
+
+    var errorBlock = main.querySelector('.error');
+    errorBlock.addEventListener('click', function (evt) {
+      if (evt.target && evt.target.matches('.error') || evt.target.matches('.error__button')) {
+        errorBlock.parentElement.removeChild(errorBlock);
+      }
+    });
+  };
+
+  // creates an ad label
+  var renderMessage = function (message) {
+    var messageBlock = message.cloneNode(true);
+    main.appendChild(messageBlock);
+  };
+
+  // sends an ad form
+  adForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(adForm), onFormLoad, onFormError);
+  });
+
+
+  window.card.closeCard();
 
 })();
