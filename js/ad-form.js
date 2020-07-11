@@ -74,8 +74,8 @@
 
   inputPrice.addEventListener('invalid', function () {
     validatePrice();
-
   });
+
   inputPrice.addEventListener('input', function () {
     validatePrice();
   });
@@ -170,6 +170,7 @@
     form: adForm,
     adFormHeader: adFormHeader,
     adFormElements: adFormElements,
+    validateRoom: validateRoom,
   };
 
 })();

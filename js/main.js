@@ -2,10 +2,13 @@
 
 (function () {
   var adForm = window.adForm.form;
+  var adFormHeader = adForm.querySelector('.ad-form-header');
+  var adFormElements = adForm.querySelectorAll('.ad-form__element');
+  var inputAddress = adForm.querySelector('#address');
 
   // activates the page
   var map = document.querySelector('.map');
-  var mapPinMain = document.querySelector('.map__pin--main');
+  var mainPin = document.querySelector('.map__pin--main');
 
   var isActivePage = true;
   var activatePage = function () {
@@ -27,7 +30,7 @@
   };
 
   // activates the page with a click
-  mapPinMain.addEventListener('mousedown', function (evt) {
+  mainPin.addEventListener('mousedown', function (evt) {
     if (evt.button === window.const.MOUSE_LEFT_BUTTON) {
       if (isActivePage) {
         activatePage();
@@ -37,7 +40,7 @@
   });
 
   // activates the page from the keyboard
-  mapPinMain.addEventListener('keydown', function (evt) {
+  mainPin.addEventListener('keydown', function (evt) {
     if (evt.key === window.const.Key.ENTER) {
       if (isActivePage) {
         activatePage();
@@ -48,8 +51,8 @@
 
   // gets label coordinates
   var getPinCoordinates = function (isRoundPin) {
-    var xLeft = mapPinMain.style.left;
-    var yTop = mapPinMain.style.top;
+    var xLeft = mainPin.style.left;
+    var yTop = mainPin.style.top;
     var halfPin = window.const.PinSize.SIDE_LENGTH / 2;
     var x;
     var y;
@@ -100,6 +103,19 @@
     bungalo: 'bungalo',
   };
 
+  // deletes pins
+  var deletePins = function () {
+    // receives block with pins
+    var pinBox = window.pin.mapPinsBox;
+    var pinBoxChildren = pinBox.querySelectorAll('.map__pin:not(.map__pin--main)');
+
+    // deletes pins
+    pinBoxChildren.forEach(function (itemPin) {
+      var pinChild = itemPin;
+      pinChild.parentElement.removeChild(pinChild);
+    });
+  };
+
   // sets the housing type filter
   housingType.addEventListener('change', function () {
     housingTypeValue = housingType.value;
@@ -117,15 +133,9 @@
       }
     });
 
-    // receives block with pins
-    var pinBox = window.pin.mapPinsBox;
-    var pinBoxChildren = pinBox.querySelectorAll('.map__pin:not(.map__pin--main)');
+    window.card.closeCard();
 
-    // deletes pins
-    pinBoxChildren.forEach(function (itemPin) {
-      var pinChild = itemPin;
-      pinChild.parentElement.removeChild(pinChild);
-    });
+    deletePins();
 
     // displays filtered pins
     var filterAds = newAds.slice(0, PIN_COUNT);
@@ -149,6 +159,8 @@
   // successful form submission
   var onFormLoad = function () {
     renderMessage(successMessage);
+
+    deactivatePage();
 
     // message close handlers
     document.addEventListener('keydown', function (evt) {
@@ -202,7 +214,41 @@
     window.backend.save(new FormData(adForm), onFormLoad, onFormError);
   });
 
+  var deactivatePage = function () {
+    // close a map with ads
+    map.classList.add('map--faded');
 
-  window.card.closeCard();
+    // removes form transparency
+    adForm.classList.add('ad-form--disabled');
+
+    // turns off ads form controls
+    adFormHeader.setAttribute('disabled', '');
+    adFormElements.forEach(function (itemFieldset) {
+      itemFieldset.setAttribute('disabled', '');
+    });
+
+    window.filterForm.turnOffFilter();
+
+    adForm.reset();
+    inputAddress.value = window.const.PinСoordinate.LEFT + window.const.PinSize.SIDE_LENGTH / 2 + ', ' + (window.const.PinСoordinate.TOP + window.const.PinSize.SIDE_LENGTH / 2);
+
+    mainPin.style.left = window.const.PinСoordinate.LEFT + 'px';
+    mainPin.style.top = window.const.PinСoordinate.TOP + 'px';
+
+    window.card.closeCard();
+
+    deletePins();
+
+    isActivePage = true;
+
+    window.adForm.validateRoom();
+  };
+
+  // resets an ad form
+  var resetButton = adForm.querySelector('.ad-form__reset');
+  resetButton.addEventListener('click', function () {
+    adForm.reset();
+    inputAddress.value = window.const.PinСoordinate.LEFT + window.const.PinSize.SIDE_LENGTH / 2 + ', ' + (window.const.PinСoordinate.TOP + window.const.PinSize.HEIGHT);
+  });
 
 })();
