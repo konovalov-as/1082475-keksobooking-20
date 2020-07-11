@@ -1,9 +1,14 @@
 'use strict';
 
 (function () {
+  var adForm = window.adForm.form;
+  var adFormHeader = adForm.querySelector('.ad-form-header');
+  var adFormElements = adForm.querySelectorAll('.ad-form__element');
+  var inputAddress = adForm.querySelector('#address');
+
   // activates the page
   var map = document.querySelector('.map');
-  var mapPinMain = document.querySelector('.map__pin--main');
+  var mainPin = document.querySelector('.map__pin--main');
 
   var isActivePage = true;
   var activatePage = function () {
@@ -25,7 +30,7 @@
   };
 
   // activates the page with a click
-  mapPinMain.addEventListener('mousedown', function (evt) {
+  mainPin.addEventListener('mousedown', function (evt) {
     if (evt.button === window.const.MOUSE_LEFT_BUTTON) {
       if (isActivePage) {
         activatePage();
@@ -35,7 +40,7 @@
   });
 
   // activates the page from the keyboard
-  mapPinMain.addEventListener('keydown', function (evt) {
+  mainPin.addEventListener('keydown', function (evt) {
     if (evt.key === window.const.Key.ENTER) {
       if (isActivePage) {
         activatePage();
@@ -46,8 +51,8 @@
 
   // gets label coordinates
   var getPinCoordinates = function (isRoundPin) {
-    var xLeft = mapPinMain.style.left;
-    var yTop = mapPinMain.style.top;
+    var xLeft = mainPin.style.left;
+    var yTop = mainPin.style.top;
     var halfPin = window.const.PinSize.SIDE_LENGTH / 2;
     var x;
     var y;
@@ -98,6 +103,19 @@
     bungalo: 'bungalo',
   };
 
+  // deletes pins
+  var deletePins = function () {
+    // receives block with pins
+    var pinBox = window.pin.mapPinsBox;
+    var pinBoxChildren = pinBox.querySelectorAll('.map__pin:not(.map__pin--main)');
+
+    // deletes pins
+    pinBoxChildren.forEach(function (itemPin) {
+      var pinChild = itemPin;
+      pinChild.parentElement.removeChild(pinChild);
+    });
+  };
+
   // sets the housing type filter
   housingType.addEventListener('change', function () {
     housingTypeValue = housingType.value;
@@ -115,23 +133,122 @@
       }
     });
 
-    // receives block with pins
-    var pinBox = window.pin.mapPinsBox;
-    var pinBoxChildren = pinBox.querySelectorAll('.map__pin:not(.map__pin--main)');
+    window.card.closeCard();
 
-    // deletes pins
-    pinBoxChildren.forEach(function (itemPin) {
-      var pinChild = itemPin;
-      pinChild.parentElement.removeChild(pinChild);
-    });
+    deletePins();
 
     // displays filtered pins
     var filterAds = newAds.slice(0, PIN_COUNT);
     window.pin.renderPins(filterAds);
-    // var pinBox = map.querySelector('.map__pins');
-    // pinBox.removeEventListener('click', window.card.openCard);
     window.card.onCardOpen(filterAds);
+  });
+
+  // gets a block to insert messages
+  var main = document.querySelector('main');
+
+  // gets a success message template
+  var successMessage = document.querySelector('#success')
+    .content
+    .querySelector('.success');
+
+  // gets a error message template
+  var successError = document.querySelector('#error')
+    .content
+    .querySelector('.error');
+
+  // successful form submission
+  var onFormUpload = function () {
+    renderMessage(successMessage);
+
+    deactivatePage();
+
+    // message close handlers
+    document.addEventListener('keydown', function (evt) {
+      if (evt.key === window.const.Key.ESCAPE) {
+        var child = main.querySelector('.success');
+        if (child) {
+          child.parentElement.removeChild(child);
+        }
+      }
+    });
+
+    var successBlock = main.querySelector('.success');
+    successBlock.addEventListener('click', function (evt) {
+      if (evt.target && evt.target.matches('.success')) {
+        successBlock.parentElement.removeChild(successBlock);
+      }
+    });
+  };
+
+  // error form submission
+  var onFormError = function () {
+    renderMessage(successError);
+
+    // message close handlers
+    document.addEventListener('keydown', function (evt) {
+      if (evt.key === window.const.Key.ESCAPE) {
+        var child = main.querySelector('.error');
+        if (child) {
+          child.parentElement.removeChild(child);
+        }
+      }
+    });
+
+    var errorBlock = main.querySelector('.error');
+    errorBlock.addEventListener('click', function (evt) {
+      if (evt.target && evt.target.matches('.error') || evt.target.matches('.error__button')) {
+        errorBlock.parentElement.removeChild(errorBlock);
+      }
+    });
+  };
+
+  // creates an ad label
+  var renderMessage = function (message) {
+    var messageBlock = message.cloneNode(true);
+    main.appendChild(messageBlock);
+  };
+
+  // sends an ad form
+  adForm.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    window.backend.save(new FormData(adForm), onFormUpload, onFormError);
+  });
+
+  var deactivatePage = function () {
+    // close a map with ads
+    map.classList.add('map--faded');
+
+    // removes form transparency
+    adForm.classList.add('ad-form--disabled');
+
+    // turns off ads form controls
+    adFormHeader.setAttribute('disabled', '');
+    adFormElements.forEach(function (itemFieldset) {
+      itemFieldset.setAttribute('disabled', '');
+    });
+
+    window.filterForm.turnOffFilter();
+
+    adForm.reset();
+    inputAddress.value = window.const.PinСoordinate.LEFT + window.const.PinSize.SIDE_LENGTH / 2 + ', ' + (window.const.PinСoordinate.TOP + window.const.PinSize.SIDE_LENGTH / 2);
+
+    mainPin.style.left = window.const.PinСoordinate.LEFT + 'px';
+    mainPin.style.top = window.const.PinСoordinate.TOP + 'px';
+
     window.card.closeCard();
+
+    deletePins();
+
+    isActivePage = true;
+
+    window.adForm.validateRoom();
+  };
+
+  // resets an ad form
+  var resetButton = adForm.querySelector('.ad-form__reset');
+  resetButton.addEventListener('click', function () {
+    adForm.reset();
+    inputAddress.value = window.const.PinСoordinate.LEFT + window.const.PinSize.SIDE_LENGTH / 2 + ', ' + (window.const.PinСoordinate.TOP + window.const.PinSize.HEIGHT);
   });
 
 })();

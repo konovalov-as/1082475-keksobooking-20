@@ -10,12 +10,16 @@
     HEIGHT: 84,
     HEIGHT_PIN: 22,
   };
+  var PinСoordinate = {
+    LEFT: 570,
+    TOP: 375,
+  };
   var YBound = {
     TOP: 130,
     BOTTOM: 630,
   };
   var Url = {
-    POST: '',
+    POST: 'https://javascript.pages.academy/keksobooking',
     GET: 'https://javascript.pages.academy/keksobooking/data',
   };
   var StatusCode = {
@@ -33,6 +37,7 @@
     ANY_HOUSING: ANY_HOUSING,
     MAP_BLOCK_ELEMENT_CONT: MAP_BLOCK_ELEMENT_CONT,
     PinSize: PinSize,
+    PinСoordinate: PinСoordinate,
     YBound: YBound,
     Url: Url,
     StatusCode: StatusCode,

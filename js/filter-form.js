@@ -20,9 +20,18 @@
     filterFieldset.removeAttribute('disabled');
   };
 
+  // turns on filter form controls
+  var turnOffFilter = function () {
+    filterSelects.forEach(function (itemSelect) {
+      itemSelect.setAttribute('disabled', '');
+    });
+    filterFieldset.setAttribute('disabled', '');
+  };
+
 
   window.filterForm = {
     turnOnFilter: turnOnFilter,
+    turnOffFilter: turnOffFilter,
   };
 
 })();
