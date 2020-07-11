@@ -157,7 +157,7 @@
     .querySelector('.error');
 
   // successful form submission
-  var onFormLoad = function () {
+  var onFormUpload = function () {
     renderMessage(successMessage);
 
     deactivatePage();
@@ -211,7 +211,7 @@
   // sends an ad form
   adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.save(new FormData(adForm), onFormLoad, onFormError);
+    window.backend.save(new FormData(adForm), onFormUpload, onFormError);
   });
 
   var deactivatePage = function () {
