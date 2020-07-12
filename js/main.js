@@ -15,15 +15,15 @@
     // opens a map with ads
     map.classList.remove('map--faded');
 
-    // turns on ads form controls
-    window.adForm.adFormHeader.removeAttribute('disabled');
-    window.adForm.adFormElements.forEach(function (itemFieldset) {
-      itemFieldset.removeAttribute('disabled');
+    // enable an ad form controls
+    adFormHeader.removeAttribute('disabled');
+    adFormElements.forEach(function (fieldset) {
+      fieldset.removeAttribute('disabled');
     });
-    // removes form transparency
-    window.adForm.form.classList.remove('ad-form--disabled');
+    // removes an ad form transparency
+    adForm.classList.remove('ad-form--disabled');
     // sets the read-only attribute of the address field
-    window.adForm.inputAddress.setAttribute('readonly', 'readonly');
+    inputAddress.setAttribute('readonly', 'readonly');
 
     window.backend.load(onLoad, onError);
     isActivePage = false;
@@ -63,7 +63,7 @@
     if (!isRoundPin) {
       y += halfPin + window.const.PinSize.HEIGHT_PIN;
     }
-    window.adForm.inputAddress.value = x + ', ' + y;
+    inputAddress.value = x + ', ' + y;
   };
   getPinCoordinates(true);
 
@@ -107,12 +107,11 @@
   var deletePins = function () {
     // receives block with pins
     var pinBox = window.pin.mapPinsBox;
-    var pinBoxChildren = pinBox.querySelectorAll('.map__pin:not(.map__pin--main)');
+    var pins = pinBox.querySelectorAll('.map__pin:not(.map__pin--main)');
 
     // deletes pins
-    pinBoxChildren.forEach(function (itemPin) {
-      var pinChild = itemPin;
-      pinChild.parentElement.removeChild(pinChild);
+    pins.forEach(function (pin) {
+      pin.remove();
     });
   };
 
@@ -147,27 +146,27 @@
   var main = document.querySelector('main');
 
   // gets a success message template
-  var successMessage = document.querySelector('#success')
+  var successPopup = document.querySelector('#success')
     .content
     .querySelector('.success');
 
   // gets a error message template
-  var successError = document.querySelector('#error')
+  var errorPopup = document.querySelector('#error')
     .content
     .querySelector('.error');
 
   // successful form submission
   var onFormUpload = function () {
-    renderMessage(successMessage);
+    renderMessage(successPopup);
 
     deactivatePage();
 
-    // message close handlers
+    // success message close handler
     document.addEventListener('keydown', function (evt) {
       if (evt.key === window.const.Key.ESCAPE) {
         var child = main.querySelector('.success');
         if (child) {
-          child.parentElement.removeChild(child);
+          child.remove();
         }
       }
     });
@@ -182,15 +181,16 @@
 
   // error form submission
   var onFormError = function () {
-    renderMessage(successError);
+    renderMessage(errorPopup);
 
-    // message close handlers
+    // error message close handler
     document.addEventListener('keydown', function (evt) {
-      if (evt.key === window.const.Key.ESCAPE) {
-        var child = main.querySelector('.error');
-        if (child) {
-          child.parentElement.removeChild(child);
-        }
+      if (!evt.key === window.const.Key.ESCAPE) {
+        return;
+      }
+      var child = main.querySelector('.error');
+      if (child) {
+        child.parentElement.removeChild(child);
       }
     });
 
@@ -215,18 +215,19 @@
   });
 
   var deactivatePage = function () {
-    // close a map with ads
+    // closes a map with ads
     map.classList.add('map--faded');
 
-    // removes form transparency
+    // adds an ad form transparency
     adForm.classList.add('ad-form--disabled');
 
-    // turns off ads form controls
+    // disables an ad form controls
     adFormHeader.setAttribute('disabled', '');
-    adFormElements.forEach(function (itemFieldset) {
-      itemFieldset.setAttribute('disabled', '');
+    adFormElements.forEach(function (fieldset) {
+      fieldset.setAttribute('disabled', '');
     });
 
+    // disables a filter form controls
     window.filterForm.turnOffFilter();
 
     adForm.reset();
@@ -247,8 +248,7 @@
   // resets an ad form
   var resetButton = adForm.querySelector('.ad-form__reset');
   resetButton.addEventListener('click', function () {
-    adForm.reset();
-    inputAddress.value = window.const.PinСoordinate.LEFT + window.const.PinSize.SIDE_LENGTH / 2 + ', ' + (window.const.PinСoordinate.TOP + window.const.PinSize.HEIGHT);
+    deactivatePage();
   });
 
 })();
