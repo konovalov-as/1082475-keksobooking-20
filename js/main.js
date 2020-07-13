@@ -67,10 +67,9 @@
   };
   getPinCoordinates(true);
 
-  var ads;
   // receives offers from the server
   var onLoad = function (offers) {
-    ads = offers;
+    window.ads = offers;
     updateAds();
   };
 
@@ -85,62 +84,10 @@
   // displays the first five pins
   var PIN_COUNT = window.const.PIN_COUNT;
   var updateAds = function () {
-    var filterAds = ads.slice(0, PIN_COUNT);
+    var filterAds = window.ads.slice(0, PIN_COUNT);
     window.pin.renderPins(filterAds);
     window.card.onCardOpen(filterAds);
   };
-
-  // receives select with housing type
-  var filterForm = document.querySelector('.map__filters');
-  var housingType = filterForm.querySelector('#housing-type');
-  var housingTypeValue = '';
-
-  var mapHousingTypeToValue = {
-    // any: 'any',
-    palace: 'palace',
-    flat: 'flat',
-    house: 'house',
-    bungalo: 'bungalo',
-  };
-
-  // deletes pins
-  var deletePins = function () {
-    // receives block with pins
-    var pinBox = window.pin.mapPinsBox;
-    var pins = pinBox.querySelectorAll('.map__pin:not(.map__pin--main)');
-
-    // deletes pins
-    pins.forEach(function (pin) {
-      pin.remove();
-    });
-  };
-
-  // sets the housing type filter
-  housingType.addEventListener('change', function () {
-    housingTypeValue = housingType.value;
-    var newAds = [];
-
-    ads.forEach(function (itemAd) {
-      var mapHousingType = mapHousingTypeToValue[itemAd.offer.type];
-
-      // set the any housing type
-      if (housingTypeValue === window.const.ANY_HOUSING) {
-        newAds.push(itemAd);
-      }
-      if (housingTypeValue === mapHousingType) {
-        newAds.push(itemAd);
-      }
-    });
-
-    window.card.closeCard();
-
-    deletePins();
-
-    // displays filtered pins
-    var filterAds = newAds.slice(0, PIN_COUNT);
-    window.pin.renderPins(filterAds);
-    window.card.onCardOpen(filterAds);
-  });
 
   // gets a block to insert messages
   var main = document.querySelector('main');
@@ -238,7 +185,7 @@
 
     window.card.closeCard();
 
-    deletePins();
+    window.pin.deletePins();
 
     isActivePage = true;
 

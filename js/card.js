@@ -84,7 +84,7 @@
     var housingType = mapHousingTypeToAlias[ad.offer.type];
     cardElement.querySelector('.popup__type').textContent = housingType;
 
-    cardElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.rooms + ' гостей';
+    cardElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
     cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
 
     getAllAvailableFeatures(ad.offer.features, cardElement);
