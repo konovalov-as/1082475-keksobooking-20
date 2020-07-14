@@ -1,15 +1,15 @@
 'use strict';
 
 (function () {
-  // block for inserting ad tags
-  var mapPinsBox = document.querySelector('.map__pins');
+  // gets a block for inserting ad tags
+  var pinBox = document.querySelector('.map__pins');
 
-  // gets label template for ad
+  // gets a pin template for an ad
   var mapPinTemplate = document.querySelector('#pin')
     .content
     .querySelector('.map__pin');
 
-  // creates an ad label
+  // creates an ad pin
   var createPin = function (ad) {
     var mapPinElement = mapPinTemplate.cloneNode(true);
     mapPinElement.style.left = ad.location.x - window.const.PinSize.SIDE_LENGTH / 2 + 'px';
@@ -19,22 +19,29 @@
     return mapPinElement;
   };
 
-  // render tags on the page
+  // renders pins on the page
   var renderPins = function (ads) {
     var fragment = document.createDocumentFragment();
     ads.forEach(function (itemAd, indexAd) {
       fragment.appendChild(createPin(itemAd, indexAd));
     });
-    mapPinsBox.appendChild(fragment);
+    pinBox.appendChild(fragment);
     window.filterForm.turnOnFilter();
   };
 
-  // window.backend.save('sdsdfdfffffddddgdgf');
+  // deletes pins
+  var deletePins = function () {
+    var pins = pinBox.querySelectorAll('.map__pin:not(.map__pin--main)');
+
+    pins.forEach(function (pin) {
+      pin.remove();
+    });
+  };
 
 
   window.pin = {
     renderPins: renderPins,
-    mapPinsBox: mapPinsBox,
+    deletePins: deletePins,
   };
 
 })();

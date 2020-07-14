@@ -15,15 +15,15 @@
     // opens a map with ads
     map.classList.remove('map--faded');
 
-    // turns on ads form controls
-    window.adForm.adFormHeader.removeAttribute('disabled');
-    window.adForm.adFormElements.forEach(function (itemFieldset) {
-      itemFieldset.removeAttribute('disabled');
+    // enable an ad form controls
+    adFormHeader.removeAttribute('disabled');
+    adFormElements.forEach(function (fieldset) {
+      fieldset.removeAttribute('disabled');
     });
-    // removes form transparency
-    window.adForm.form.classList.remove('ad-form--disabled');
+    // removes an ad form transparency
+    adForm.classList.remove('ad-form--disabled');
     // sets the read-only attribute of the address field
-    window.adForm.inputAddress.setAttribute('readonly', 'readonly');
+    inputAddress.setAttribute('readonly', 'readonly');
 
     window.backend.load(onLoad, onError);
     isActivePage = false;
@@ -63,14 +63,13 @@
     if (!isRoundPin) {
       y += halfPin + window.const.PinSize.HEIGHT_PIN;
     }
-    window.adForm.inputAddress.value = x + ', ' + y;
+    inputAddress.value = x + ', ' + y;
   };
   getPinCoordinates(true);
 
-  var ads;
   // receives offers from the server
   var onLoad = function (offers) {
-    ads = offers;
+    window.ads = offers;
     updateAds();
   };
 
@@ -85,113 +84,59 @@
   // displays the first five pins
   var PIN_COUNT = window.const.PIN_COUNT;
   var updateAds = function () {
-    var filterAds = ads.slice(0, PIN_COUNT);
+    var filterAds = window.ads.slice(0, PIN_COUNT);
     window.pin.renderPins(filterAds);
     window.card.onCardOpen(filterAds);
   };
-
-  // receives select with housing type
-  var filterForm = document.querySelector('.map__filters');
-  var housingType = filterForm.querySelector('#housing-type');
-  var housingTypeValue = '';
-
-  var mapHousingTypeToValue = {
-    // any: 'any',
-    palace: 'palace',
-    flat: 'flat',
-    house: 'house',
-    bungalo: 'bungalo',
-  };
-
-  // deletes pins
-  var deletePins = function () {
-    // receives block with pins
-    var pinBox = window.pin.mapPinsBox;
-    var pinBoxChildren = pinBox.querySelectorAll('.map__pin:not(.map__pin--main)');
-
-    // deletes pins
-    pinBoxChildren.forEach(function (itemPin) {
-      var pinChild = itemPin;
-      pinChild.parentElement.removeChild(pinChild);
-    });
-  };
-
-  // sets the housing type filter
-  housingType.addEventListener('change', function () {
-    housingTypeValue = housingType.value;
-    var newAds = [];
-
-    ads.forEach(function (itemAd) {
-      var mapHousingType = mapHousingTypeToValue[itemAd.offer.type];
-
-      // set the any housing type
-      if (housingTypeValue === window.const.ANY_HOUSING) {
-        newAds.push(itemAd);
-      }
-      if (housingTypeValue === mapHousingType) {
-        newAds.push(itemAd);
-      }
-    });
-
-    window.card.closeCard();
-
-    deletePins();
-
-    // displays filtered pins
-    var filterAds = newAds.slice(0, PIN_COUNT);
-    window.pin.renderPins(filterAds);
-    window.card.onCardOpen(filterAds);
-  });
 
   // gets a block to insert messages
   var main = document.querySelector('main');
 
   // gets a success message template
-  var successMessage = document.querySelector('#success')
+  var successPopup = document.querySelector('#success')
     .content
     .querySelector('.success');
 
   // gets a error message template
-  var successError = document.querySelector('#error')
+  var errorPopup = document.querySelector('#error')
     .content
     .querySelector('.error');
 
+  var closePopupByKey = function (evt, typePopup) {
+    if (!evt.key === window.const.Key.ESCAPE) {
+      return;
+    }
+    if (typePopup) {
+      typePopup.remove();
+    }
+  };
+
   // successful form submission
   var onFormUpload = function () {
-    renderMessage(successMessage);
+    renderMessage(successPopup);
 
-    deactivatePage();
-
-    // message close handlers
+    // success message close handler
     document.addEventListener('keydown', function (evt) {
-      if (evt.key === window.const.Key.ESCAPE) {
-        var child = main.querySelector('.success');
-        if (child) {
-          child.parentElement.removeChild(child);
-        }
-      }
+      closePopupByKey(evt, successBlock);
     });
 
     var successBlock = main.querySelector('.success');
     successBlock.addEventListener('click', function (evt) {
       if (evt.target && evt.target.matches('.success')) {
-        successBlock.parentElement.removeChild(successBlock);
+        successBlock.remove();
       }
     });
+
+    deactivatePage();
   };
 
   // error form submission
   var onFormError = function () {
-    renderMessage(successError);
+    renderMessage(errorPopup);
 
-    // message close handlers
+    // error message close handler
     document.addEventListener('keydown', function (evt) {
-      if (evt.key === window.const.Key.ESCAPE) {
-        var child = main.querySelector('.error');
-        if (child) {
-          child.parentElement.removeChild(child);
-        }
-      }
+      closePopupByKey(evt, errorBlock);
     });
 
     var errorBlock = main.querySelector('.error');
@@ -215,18 +160,19 @@
   });
 
   var deactivatePage = function () {
-    // close a map with ads
+    // closes a map with ads
     map.classList.add('map--faded');
 
-    // removes form transparency
+    // adds an ad form transparency
     adForm.classList.add('ad-form--disabled');
 
-    // turns off ads form controls
+    // disables an ad form controls
     adFormHeader.setAttribute('disabled', '');
-    adFormElements.forEach(function (itemFieldset) {
-      itemFieldset.setAttribute('disabled', '');
+    adFormElements.forEach(function (fieldset) {
+      fieldset.setAttribute('disabled', '');
     });
 
+    // disables a filter form controls
     window.filterForm.turnOffFilter();
 
     adForm.reset();
@@ -237,7 +183,7 @@
 
     window.card.closeCard();
 
-    deletePins();
+    window.pin.deletePins();
 
     isActivePage = true;
 
@@ -247,8 +193,7 @@
   // resets an ad form
   var resetButton = adForm.querySelector('.ad-form__reset');
   resetButton.addEventListener('click', function () {
-    adForm.reset();
-    inputAddress.value = window.const.PinСoordinate.LEFT + window.const.PinSize.SIDE_LENGTH / 2 + ', ' + (window.const.PinСoordinate.TOP + window.const.PinSize.HEIGHT);
+    deactivatePage();
   });
 
 })();

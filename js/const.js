@@ -5,6 +5,8 @@
   var PIN_COUNT = 5;
   var ANY_HOUSING = 'any';
   var MAP_BLOCK_ELEMENT_CONT = 2;
+  var DEBOUNCE_INTERVAL = 500; // ms
+  var FILTER_ANY_VALUE = 'any';
   var PinSize = {
     SIDE_LENGTH: 62,
     HEIGHT: 84,
@@ -29,6 +31,15 @@
     ENTER: 'Enter',
     ESCAPE: 'Escape',
   };
+  var PriceKey = {
+    LOW: 'low',
+    MIDDLE: 'middle',
+    HIGH: 'high',
+  };
+  var PriceValue = {
+    MIDDLE: 10000,
+    HIGH: 50000,
+  };
 
 
   window.const = {
@@ -36,12 +47,16 @@
     PIN_COUNT: PIN_COUNT,
     ANY_HOUSING: ANY_HOUSING,
     MAP_BLOCK_ELEMENT_CONT: MAP_BLOCK_ELEMENT_CONT,
+    DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL,
+    FILTER_ANY_VALUE: FILTER_ANY_VALUE,
     PinSize: PinSize,
     PinСoordinate: PinСoordinate,
     YBound: YBound,
     Url: Url,
     StatusCode: StatusCode,
     Key: Key,
+    PriceKey: PriceKey,
+    PriceValue: PriceValue,
   };
 
 })();

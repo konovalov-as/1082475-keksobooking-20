@@ -84,7 +84,7 @@
     var housingType = mapHousingTypeToAlias[ad.offer.type];
     cardElement.querySelector('.popup__type').textContent = housingType;
 
-    cardElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.rooms + ' гостей';
+    cardElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
     cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
 
     getAllAvailableFeatures(ad.offer.features, cardElement);
@@ -168,6 +168,13 @@
     removeActivePin();
   };
 
+  var closeCardByKey = function (evt) {
+    if (evt.key === window.const.Key.ESCAPE) {
+      closeCard();
+      document.removeEventListener('keydown', closeCardByKey);
+    }
+  };
+
   // adds a card close handler
   var onCardClose = function () {
     var closeCardButton = document.querySelector('.map__card .popup__close');
@@ -176,11 +183,7 @@
     closeCardButton.addEventListener('click', closeCard);
 
     // adds Esc key handler
-    document.addEventListener('keydown', function (evt) {
-      if (evt.key === window.const.Key.ESCAPE) {
-        closeCard();
-      }
-    });
+    document.addEventListener('keydown', closeCardByKey);
   };
 
 
