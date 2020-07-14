@@ -1,18 +1,6 @@
 'use strict';
 
 (function () {
-  // form with filters
-  var filterForm = document.querySelector('.map__filters');
-  var filterSelects = filterForm.querySelectorAll('select');
-  var filterFieldset = filterForm.querySelector('fieldset');
-
-  var housingType = filterForm.querySelector('#housing-type');
-  var housingPrice = filterForm.querySelector('#housing-price');
-  var housingRoom = filterForm.querySelector('#housing-rooms');
-  var housingGuest = filterForm.querySelector('#housing-guests');
-
-  var featuresBlock = filterForm.querySelector('.map__features');
-
   var FILTER_ANY_VALUE = window.const.FILTER_ANY_VALUE;
 
   var LOW_PRICE_KEY = window.const.PriceKey.LOW;
@@ -22,30 +10,36 @@
   var MIDDLE_PRICE_VALUE = window.const.PriceValue.MIDDLE;
   var HIGH_PRICE_VALUE = window.const.PriceValue.HIGH;
 
-  // turns off filter form controls
-  filterSelects.forEach(function (itemSelect) {
-    itemSelect.setAttribute('disabled', 'disabled');
-  });
-  filterFieldset.setAttribute('disabled', 'disabled');
+  // gets a form with filters
+  var filterForm = document.querySelector('.map__filters');
+  var filterSelects = filterForm.querySelectorAll('select');
+  var filterFieldset = filterForm.querySelector('fieldset');
 
-  // turns on filter form controls
+  // gets filter fields
+  var housingType = filterForm.querySelector('#housing-type');
+  var housingPrice = filterForm.querySelector('#housing-price');
+  var housingRoom = filterForm.querySelector('#housing-rooms');
+  var housingGuest = filterForm.querySelector('#housing-guests');
+  var featuresBlock = filterForm.querySelector('.map__features');
+
+  // turns on filters form controls
   var turnOnFilter = function () {
     filterSelects.forEach(function (itemSelect) {
       itemSelect.removeAttribute('disabled');
     });
     filterFieldset.removeAttribute('disabled');
 
-    filterForm.addEventListener('change', onFilterFormChange);
+    filterForm.addEventListener('change', onFilterChange);
   };
 
-  // turns on filter form controls
+  // turns off filters form controls
   var turnOffFilter = function () {
     filterSelects.forEach(function (itemSelect) {
       itemSelect.setAttribute('disabled', '');
     });
     filterFieldset.setAttribute('disabled', '');
 
-    filterForm.removeEventListener('change', onFilterFormChange);
+    filterForm.removeEventListener('change', onFilterChange);
   };
 
   // ---------------------- filters ---------------------- //
@@ -66,21 +60,21 @@
   };
 
   var filterHousingFeatures = function (ad) {
-    // var adFeatures = ad.offer.features;
-    // var checkedFeatures = features;
-    return ad;
+    var checkedFeatures = featuresBlock.querySelectorAll('.map__checkbox:checked');
+
+    return Array.from(checkedFeatures).every(function (checkedFeature) {
+      return ad.offer.features.includes(checkedFeature.value);
+    });
   };
 
   var setFiltersAds = function () {
     var filterAds = [];
-    var features = featuresBlock.querySelectorAll('input:checked');
 
-    for (var i = 0; i < window.ads.length; i++) {
-      var ad = window.ads[i];
-      if (filterHousingType(ad) && filterHousingPrice(ad) && filterHousingRooms(ad) && filterHousingGuests(ad) && filterHousingFeatures(ad, features)) {
+    window.ads.forEach(function (ad) {
+      if (filterHousingType(ad) && filterHousingPrice(ad) && filterHousingRooms(ad) && filterHousingGuests(ad) && filterHousingFeatures(ad)) {
         filterAds.push(ad);
       }
-    }
+    });
 
     window.card.closeCard();
     window.pin.deletePins();
@@ -89,7 +83,7 @@
     window.card.onCardOpen(filterAds);
   };
 
-  var onFilterFormChange = function () {
+  var onFilterChange = function () {
     window.debounce(setFiltersAds);
   };
   // ---------------------- filters ---------------------- //
