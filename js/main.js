@@ -102,28 +102,32 @@
     .content
     .querySelector('.error');
 
+  var closePopupByKey = function (evt, typePopup) {
+    if (!evt.key === window.const.Key.ESCAPE) {
+      return;
+    }
+    if (typePopup) {
+      typePopup.remove();
+    }
+  };
+
   // successful form submission
   var onFormUpload = function () {
     renderMessage(successPopup);
 
-    deactivatePage();
-
     // success message close handler
     document.addEventListener('keydown', function (evt) {
-      if (evt.key === window.const.Key.ESCAPE) {
-        var child = main.querySelector('.success');
-        if (child) {
-          child.remove();
-        }
-      }
+      closePopupByKey(evt, successBlock);
     });
 
     var successBlock = main.querySelector('.success');
     successBlock.addEventListener('click', function (evt) {
       if (evt.target && evt.target.matches('.success')) {
-        successBlock.parentElement.removeChild(successBlock);
+        successBlock.remove();
       }
     });
+
+    deactivatePage();
   };
 
   // error form submission
@@ -132,13 +136,7 @@
 
     // error message close handler
     document.addEventListener('keydown', function (evt) {
-      if (!evt.key === window.const.Key.ESCAPE) {
-        return;
-      }
-      var child = main.querySelector('.error');
-      if (child) {
-        child.parentElement.removeChild(child);
-      }
+      closePopupByKey(evt, errorBlock);
     });
 
     var errorBlock = main.querySelector('.error');
