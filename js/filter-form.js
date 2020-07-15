@@ -43,20 +43,26 @@
   };
 
   // ---------------------- filters ---------------------- //
-  var filterHousingType = function (ad) {
-    return housingType.value === ad.offer.type || housingType.value === FILTER_ANY_VALUE;
+  var filterHousingType = function (type) {
+    return housingType.value === type
+      || housingType.value === FILTER_ANY_VALUE;
   };
 
-  var filterHousingPrice = function (ad) {
-    return (housingPrice.value === LOW_PRICE_KEY && ad.offer.price < MIDDLE_PRICE_VALUE) || (housingPrice.value === MIDDLE_PRICE_KEY && ad.offer.price >= MIDDLE_PRICE_VALUE && ad.offer.price < HIGH_PRICE_VALUE) || (housingPrice.value === HIGH_PRICE_KEY && ad.offer.price >= HIGH_PRICE_VALUE) || (housingPrice.value === ad.offer.price || housingPrice.value === FILTER_ANY_VALUE);
+  var filterHousingPrice = function (price) {
+    return (housingPrice.value === LOW_PRICE_KEY && price < MIDDLE_PRICE_VALUE)
+      || (housingPrice.value === MIDDLE_PRICE_KEY && price >= MIDDLE_PRICE_VALUE && price < HIGH_PRICE_VALUE)
+      || (housingPrice.value === HIGH_PRICE_KEY && price >= HIGH_PRICE_VALUE)
+      || (housingPrice.value === price || housingPrice.value === FILTER_ANY_VALUE);
   };
 
-  var filterHousingRooms = function (ad) {
-    return (+housingRoom.value === ad.offer.rooms) || (housingRoom.value === FILTER_ANY_VALUE);
+  var filterHousingRooms = function (rooms) {
+    return (+housingRoom.value === rooms)
+      || (housingRoom.value === FILTER_ANY_VALUE);
   };
 
-  var filterHousingGuests = function (ad) {
-    return (+housingGuest.value === ad.offer.guests) || (housingGuest.value === FILTER_ANY_VALUE);
+  var filterHousingGuests = function (guests) {
+    return (+housingGuest.value === guests)
+      || (housingGuest.value === FILTER_ANY_VALUE);
   };
 
   var filterHousingFeatures = function (ad) {
@@ -67,24 +73,33 @@
     });
   };
 
-  var setFiltersAds = function () {
+  var setFilterAds = function () {
+    var ads = window.ads;
     var filterAds = [];
 
-    window.ads.forEach(function (ad) {
-      if (filterHousingType(ad) && filterHousingPrice(ad) && filterHousingRooms(ad) && filterHousingGuests(ad) && filterHousingFeatures(ad)) {
+    for (var i = 0; i < ads.length; i++) {
+      var ad = ads[i];
+      if (filterHousingType(ad.offer.type)
+        && filterHousingPrice(ad.offer.price)
+        && filterHousingRooms(ad.offer.rooms)
+        && filterHousingGuests(ad.offer.guests)
+        && filterHousingFeatures(ad)) {
         filterAds.push(ad);
       }
-    });
+      if (filterAds.length > window.const.PIN_COUNT - 1) {
+        break;
+      }
+    }
 
     window.card.closeCard();
-    window.pin.deletePins();
+    window.pins.remove();
 
-    window.pin.renderPins(filterAds);
+    window.pins.render(filterAds);
     window.card.onCardOpen(filterAds);
   };
 
   var onFilterChange = function () {
-    window.debounce(setFiltersAds);
+    window.debounce(setFilterAds);
   };
   // ---------------------- filters ---------------------- //
 

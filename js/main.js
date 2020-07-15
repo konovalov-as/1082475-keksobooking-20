@@ -85,7 +85,7 @@
   var PIN_COUNT = window.const.PIN_COUNT;
   var updateAds = function () {
     var filterAds = window.ads.slice(0, PIN_COUNT);
-    window.pin.renderPins(filterAds);
+    window.pins.render(filterAds);
     window.card.onCardOpen(filterAds);
   };
 
@@ -183,7 +183,7 @@
 
     window.card.closeCard();
 
-    window.pin.deletePins();
+    window.pins.remove();
 
     isActivePage = true;
 

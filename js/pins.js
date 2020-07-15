@@ -20,7 +20,7 @@
   };
 
   // renders pins on the page
-  var renderPins = function (ads) {
+  var render = function (ads) {
     var fragment = document.createDocumentFragment();
     ads.forEach(function (itemAd, indexAd) {
       fragment.appendChild(createPin(itemAd, indexAd));
@@ -30,7 +30,7 @@
   };
 
   // deletes pins
-  var deletePins = function () {
+  var remove = function () {
     var pins = pinBox.querySelectorAll('.map__pin:not(.map__pin--main)');
 
     pins.forEach(function (pin) {
@@ -39,9 +39,9 @@
   };
 
 
-  window.pin = {
-    renderPins: renderPins,
-    deletePins: deletePins,
+  window.pins = {
+    render: render,
+    remove: remove,
   };
 
 })();
