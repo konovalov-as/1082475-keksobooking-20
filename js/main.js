@@ -26,6 +26,9 @@
     inputAddress.setAttribute('readonly', 'readonly');
 
     window.backend.load(onLoad, onError);
+
+    window.imageLoad.addEvents();
+
     isActivePage = false;
   };
 
@@ -176,6 +179,9 @@
     window.filterForm.turnOffFilter();
 
     adForm.reset();
+
+    window.imageLoad.removeEvents();
+
     inputAddress.value = window.const.PinСoordinate.LEFT + window.const.PinSize.SIDE_LENGTH / 2 + ', ' + (window.const.PinСoordinate.TOP + window.const.PinSize.SIDE_LENGTH / 2);
 
     mainPin.style.left = window.const.PinСoordinate.LEFT + 'px';

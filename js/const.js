@@ -8,6 +8,9 @@
   var DEBOUNCE_INTERVAL = 500; // ms
   var FILTER_ANY_VALUE = 'any';
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+  var DEFAULT_AVATAR = 'img/muffin-grey.svg';
+  var USER_AVATAR = 'avatar';
+  var HOUSING_PHOTO = 'photo';
   var PinSize = {
     SIDE_LENGTH: 62,
     HEIGHT: 84,
@@ -51,6 +54,9 @@
     DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL,
     FILTER_ANY_VALUE: FILTER_ANY_VALUE,
     FILE_TYPES: FILE_TYPES,
+    DEFAULT_AVATAR: DEFAULT_AVATAR,
+    USER_AVATAR: USER_AVATAR,
+    HOUSING_PHOTO: HOUSING_PHOTO,
     PinSize: PinSize,
     PinСoordinate: PinСoordinate,
     YBound: YBound,
