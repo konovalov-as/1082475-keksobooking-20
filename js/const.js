@@ -7,6 +7,7 @@
   var MAP_BLOCK_ELEMENT_CONT = 2;
   var DEBOUNCE_INTERVAL = 500; // ms
   var FILTER_ANY_VALUE = 'any';
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var PinSize = {
     SIDE_LENGTH: 62,
     HEIGHT: 84,
@@ -49,6 +50,7 @@
     MAP_BLOCK_ELEMENT_CONT: MAP_BLOCK_ELEMENT_CONT,
     DEBOUNCE_INTERVAL: DEBOUNCE_INTERVAL,
     FILTER_ANY_VALUE: FILTER_ANY_VALUE,
+    FILE_TYPES: FILE_TYPES,
     PinSize: PinSize,
     PinСoordinate: PinСoordinate,
     YBound: YBound,

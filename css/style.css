@@ -1260,3 +1260,8 @@ fieldset {
   text-align: center;
   background-color: darkorange;
 }
+
+.housing-photo {
+  width: 100%;
+  height: auto;
+}
