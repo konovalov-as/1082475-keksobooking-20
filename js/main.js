@@ -1,6 +1,11 @@
 'use strict';
 
 (function () {
+  var PinСoordinate = {
+    LEFT: 570,
+    TOP: 375,
+  };
+
   var adForm = document.querySelector('.ad-form');
   var inputAddress = adForm.querySelector('#address');
 
@@ -75,9 +80,8 @@
   };
 
   // display the first five pins
-  var PIN_COUNT = window.const.PIN_COUNT;
   var updateAds = function () {
-    var filterAds = window.ads.slice(0, PIN_COUNT);
+    var filterAds = window.ads.slice(0, window.const.PIN_COUNT);
     window.pins.render(filterAds);
     window.card.onCardOpen(filterAds);
     window.filterForm.turnOnFilter();
@@ -167,10 +171,10 @@
 
     window.imageLoad.removeEvents();
 
-    inputAddress.value = window.const.PinСoordinate.LEFT + window.const.PinSize.SIDE_LENGTH / 2 + ', ' + (window.const.PinСoordinate.TOP + window.const.PinSize.SIDE_LENGTH / 2);
+    inputAddress.value = PinСoordinate.LEFT + window.const.PinSize.SIDE_LENGTH / 2 + ', ' + (PinСoordinate.TOP + window.const.PinSize.SIDE_LENGTH / 2);
 
-    mainPin.style.left = window.const.PinСoordinate.LEFT + 'px';
-    mainPin.style.top = window.const.PinСoordinate.TOP + 'px';
+    mainPin.style.left = PinСoordinate.LEFT + 'px';
+    mainPin.style.top = PinСoordinate.TOP + 'px';
 
     window.card.closeCard();
 

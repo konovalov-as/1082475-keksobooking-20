@@ -1,14 +1,18 @@
 'use strict';
 
 (function () {
-  var FILTER_ANY_VALUE = window.const.FILTER_ANY_VALUE;
+  var FILTER_ANY_VALUE = 'any';
 
-  var LOW_PRICE_KEY = window.const.PriceKey.LOW;
-  var MIDDLE_PRICE_KEY = window.const.PriceKey.MIDDLE;
-  var HIGH_PRICE_KEY = window.const.PriceKey.HIGH;
+  var PriceKey = {
+    LOW: 'low',
+    MIDDLE: 'middle',
+    HIGH: 'high',
+  };
 
-  var MIDDLE_PRICE_VALUE = window.const.PriceValue.MIDDLE;
-  var HIGH_PRICE_VALUE = window.const.PriceValue.HIGH;
+  var PriceValue = {
+    MIDDLE: 10000,
+    HIGH: 50000,
+  };
 
   // gets a form with filters
   var filterForm = document.querySelector('.map__filters');
@@ -50,9 +54,9 @@
   };
 
   var filterHousingPrice = function (price) {
-    return (housingPrice.value === LOW_PRICE_KEY && price < MIDDLE_PRICE_VALUE)
-      || (housingPrice.value === MIDDLE_PRICE_KEY && price >= MIDDLE_PRICE_VALUE && price < HIGH_PRICE_VALUE)
-      || (housingPrice.value === HIGH_PRICE_KEY && price >= HIGH_PRICE_VALUE)
+    return (housingPrice.value === PriceKey.LOW && price < PriceValue.MIDDLE)
+      || (housingPrice.value === PriceKey.MIDDLE && price >= PriceValue.MIDDLE && price < PriceValue.HIGH)
+      || (housingPrice.value === PriceKey.HIGH && price >= PriceValue.HIGH)
       || (housingPrice.value === price || housingPrice.value === FILTER_ANY_VALUE);
   };
 

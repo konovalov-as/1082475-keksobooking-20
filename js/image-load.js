@@ -1,10 +1,9 @@
 'use strict';
 
 (function () {
-  var FILE_TYPES = window.const.FILE_TYPES;
-  var DEFAULT_AVATAR = window.const.DEFAULT_AVATAR;
-  var USER_AVATAR = window.const.USER_AVATAR;
-  var HOUSING_PHOTO = window.const.HOUSING_PHOTO;
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+  var USER_AVATAR = 'avatar';
+  var HOUSING_PHOTO = 'photo';
 
   var adForm = document.querySelector('.ad-form');
 
@@ -66,10 +65,12 @@
     housingPhoto.addEventListener('change', onHousingPhotoChange);
   };
 
+  var defaultAvatar = userAvatarPreview.src;
+
   var removeEvents = function () {
     userAvatar.removeEventListener('change', onUserAvatarChange);
     housingPhoto.removeEventListener('change', onHousingPhotoChange);
-    userAvatarPreview.src = DEFAULT_AVATAR;
+    userAvatarPreview.src = defaultAvatar;
     housingPhotoPreview.textContent = '';
   };
 

@@ -1,16 +1,10 @@
 'use strict';
 
 (function () {
-  // gets a main pin size
-  var PinSize = {
-    HALF: window.const.PinSize.SIDE_LENGTH / 2,
-    HEIGHT: window.const.PinSize.HEIGHT,
-  };
-
   // gets top and bottom bounds of the map block
   var YBound = {
-    TOP: window.const.YBound.TOP,
-    BOTTOM: window.const.YBound.BOTTOM,
+    TOP: 130,
+    BOTTOM: 630,
   };
 
   var pinsBox = document.querySelector('.map__pins');
@@ -43,23 +37,23 @@
     };
 
     // set limits on the X coordinate
-    if (endCoord.x + PinSize.HALF <= XBound.left) {
-      mainPin.style.left = XBound.left - PinSize.HALF + 'px';
+    if (endCoord.x + window.const.PinSize.SIDE_LENGTH / 2 <= XBound.left) {
+      mainPin.style.left = XBound.left - window.const.PinSize.SIDE_LENGTH / 2 + 'px';
       return;
     }
-    if (endCoord.x + PinSize.HALF >= XBound.right) {
-      mainPin.style.left = XBound.right - PinSize.HALF + 'px';
+    if (endCoord.x + window.const.PinSize.SIDE_LENGTH / 2 >= XBound.right) {
+      mainPin.style.left = XBound.right - window.const.PinSize.SIDE_LENGTH / 2 + 'px';
       return;
     }
     mainPin.style.left = endCoord.x + 'px';
 
     // set limits on the Y coordinate
-    if (endCoord.y + PinSize.HEIGHT <= YBound.TOP) {
-      mainPin.style.top = YBound.TOP - PinSize.HEIGHT + 'px';
+    if (endCoord.y + window.const.PinSize.HEIGHT <= YBound.TOP) {
+      mainPin.style.top = YBound.TOP - window.const.PinSize.HEIGHT + 'px';
       return;
     }
-    if (endCoord.y + PinSize.HEIGHT >= YBound.BOTTOM) {
-      mainPin.style.top = YBound.BOTTOM - PinSize.HEIGHT + 'px';
+    if (endCoord.y + window.const.PinSize.HEIGHT >= YBound.BOTTOM) {
+      mainPin.style.top = YBound.BOTTOM - window.const.PinSize.HEIGHT + 'px';
       return;
     }
     mainPin.style.top = endCoord.y + 'px';
