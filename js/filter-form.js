@@ -22,25 +22,26 @@
   var housingGuest = filterForm.querySelector('#housing-guests');
   var featuresBlock = filterForm.querySelector('.map__features');
 
-  // turns on filters form controls
+  // turn on filter form controls
   var turnOnFilter = function () {
     filterSelects.forEach(function (select) {
-      select.removeAttribute('disabled');
+      select.disabled = false;
     });
-    filterFieldset.removeAttribute('disabled');
+    filterFieldset.disabled = false;
 
     filterForm.addEventListener('change', onFilterChange);
   };
 
-  // turns off filters form controls
+  // turn off filter form controls
   var turnOffFilter = function () {
     filterSelects.forEach(function (select) {
-      select.setAttribute('disabled', '');
+      select.disabled = true;
     });
-    filterFieldset.setAttribute('disabled', '');
+    filterFieldset.disabled = true;
 
     filterForm.removeEventListener('change', onFilterChange);
   };
+  turnOffFilter();
 
   // ---------------------- filters ---------------------- //
   var filterHousingType = function (type) {

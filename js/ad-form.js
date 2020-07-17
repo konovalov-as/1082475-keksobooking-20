@@ -16,6 +16,7 @@
   var adForm = document.querySelector('.ad-form');
   var adFormHeader = adForm.querySelector('.ad-form-header');
   var adFormFieldsets = adForm.querySelectorAll('.ad-form__element');
+  var inputAddress = adForm.querySelector('#address');
 
   // ad form fields
   var inputTitle = adForm.querySelector('#title');
@@ -25,6 +26,32 @@
   var selectCheckOut = adForm.querySelector('#timeout');
   var selectRoomNumber = adForm.querySelector('#room_number');
   var selectCapacity = adForm.querySelector('#capacity');
+
+  // turn on ad form controls
+  var turnOnAd = function () {
+    adFormFieldsets.forEach(function (fieldset) {
+      fieldset.disabled = false;
+    });
+    adFormHeader.disabled = false;
+
+    // remove an ad form transparency
+    adForm.classList.remove('ad-form--disabled');
+
+    // set the read-only attribute of the address field
+    inputAddress.setAttribute('readonly', 'readonly');
+  };
+
+  // turn off ad form controls
+  var turnOffAd = function () {
+    adFormFieldsets.forEach(function (fieldset) {
+      fieldset.disabled = true;
+    });
+    adFormHeader.disabled = true;
+
+    // add an ad form transparency
+    adForm.classList.add('ad-form--disabled');
+  };
+  turnOffAd();
 
   // fields validation
   // header an ad
@@ -168,15 +195,11 @@
     validateRoom();
   });
 
-  // disable ad form controls
-  adFormHeader.setAttribute('disabled', 'disabled');
-  adFormFieldsets.forEach(function (fieldset) {
-    fieldset.setAttribute('disabled', 'disabled');
-  });
-
 
   window.adForm = {
     validateRoom: validateRoom,
+    turnOffAd: turnOffAd,
+    turnOnAd: turnOnAd,
   };
 
 })();

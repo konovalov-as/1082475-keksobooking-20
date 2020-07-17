@@ -2,28 +2,18 @@
 
 (function () {
   var adForm = document.querySelector('.ad-form');
-  var adFormHeader = adForm.querySelector('.ad-form-header');
-  var adFormElements = adForm.querySelectorAll('.ad-form__element');
   var inputAddress = adForm.querySelector('#address');
 
-  // activates the page
+  // activate the page
   var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
 
   var isActivePage = true;
   var activatePage = function () {
-    // opens a map with ads
+    // open a map with ads
     map.classList.remove('map--faded');
 
-    // enable an ad form controls
-    adFormHeader.removeAttribute('disabled');
-    adFormElements.forEach(function (fieldset) {
-      fieldset.removeAttribute('disabled');
-    });
-    // removes an ad form transparency
-    adForm.classList.remove('ad-form--disabled');
-    // sets the read-only attribute of the address field
-    inputAddress.setAttribute('readonly', 'readonly');
+    window.adForm.turnOnAd();
 
     window.backend.load(onLoad, onError);
 
@@ -163,19 +153,13 @@
   });
 
   var deactivatePage = function () {
-    // closes a map with ads
+    // close a map with ads
     map.classList.add('map--faded');
 
-    // adds an ad form transparency
-    adForm.classList.add('ad-form--disabled');
+    // disable ad form controls
+    window.adForm.turnOffAd();
 
-    // disables an ad form controls
-    adFormHeader.setAttribute('disabled', '');
-    adFormElements.forEach(function (fieldset) {
-      fieldset.setAttribute('disabled', '');
-    });
-
-    // disables a filter form controls
+    // disable filter form controls
     window.filterForm.turnOffFilter();
 
     adForm.reset();
