@@ -74,12 +74,13 @@
     document.body.insertAdjacentElement('afterbegin', node);
   };
 
-  // displays the first five pins
+  // display the first five pins
   var PIN_COUNT = window.const.PIN_COUNT;
   var updateAds = function () {
     var filterAds = window.ads.slice(0, PIN_COUNT);
     window.pins.render(filterAds);
     window.card.onCardOpen(filterAds);
+    window.filterForm.turnOnFilter();
   };
 
   // gets a block to insert messages
@@ -105,7 +106,7 @@
   };
 
   // successful form submission
-  var onFormUpload = function () {
+  var onFormSuccess = function () {
     renderMessage(successPopup);
 
     // success message close handler
@@ -149,7 +150,7 @@
   // sends an ad form
   adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.save(new FormData(adForm), onFormUpload, onFormError);
+    window.backend.save(new FormData(adForm), onFormSuccess, onFormError);
   });
 
   var deactivatePage = function () {

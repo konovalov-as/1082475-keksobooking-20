@@ -26,7 +26,6 @@
       fragment.appendChild(createPin(ad, index));
     });
     pinBox.appendChild(fragment);
-    window.filterForm.turnOnFilter();
   };
 
   // deletes pins

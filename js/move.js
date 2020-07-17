@@ -37,28 +37,32 @@
   };
 
   var moveMainPin = function (evt) {
-    var endCoords = {
+    var endCoord = {
       x: evt.clientX - PageOffset.left,
       y: evt.clientY - PageOffset.top,
     };
 
-    // sets limits on the X coordinate
-    if (endCoords.x + PinSize.HALF <= XBound.left) {
+    // set limits on the X coordinate
+    if (endCoord.x + PinSize.HALF <= XBound.left) {
       mainPin.style.left = XBound.left - PinSize.HALF + 'px';
-    } else if (endCoords.x + PinSize.HALF >= XBound.right) {
+      return;
+    }
+    if (endCoord.x + PinSize.HALF >= XBound.right) {
       mainPin.style.left = XBound.right - PinSize.HALF + 'px';
-    } else {
-      mainPin.style.left = endCoords.x + 'px';
+      return;
     }
+    mainPin.style.left = endCoord.x + 'px';
 
-    // sets limits on the Y coordinate
-    if (endCoords.y + PinSize.HEIGHT <= YBound.TOP) {
+    // set limits on the Y coordinate
+    if (endCoord.y + PinSize.HEIGHT <= YBound.TOP) {
       mainPin.style.top = YBound.TOP - PinSize.HEIGHT + 'px';
-    } else if (endCoords.y + PinSize.HEIGHT >= YBound.BOTTOM) {
-      mainPin.style.top = YBound.BOTTOM - PinSize.HEIGHT + 'px';
-    } else {
-      mainPin.style.top = endCoords.y + 'px';
+      return;
     }
+    if (endCoord.y + PinSize.HEIGHT >= YBound.BOTTOM) {
+      mainPin.style.top = YBound.BOTTOM - PinSize.HEIGHT + 'px';
+      return;
+    }
+    mainPin.style.top = endCoord.y + 'px';
 
     setAddress();
   };
