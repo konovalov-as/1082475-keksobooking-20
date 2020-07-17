@@ -24,8 +24,8 @@
 
   // turns on filters form controls
   var turnOnFilter = function () {
-    filterSelects.forEach(function (itemSelect) {
-      itemSelect.removeAttribute('disabled');
+    filterSelects.forEach(function (select) {
+      select.removeAttribute('disabled');
     });
     filterFieldset.removeAttribute('disabled');
 
@@ -34,8 +34,8 @@
 
   // turns off filters form controls
   var turnOffFilter = function () {
-    filterSelects.forEach(function (itemSelect) {
-      itemSelect.setAttribute('disabled', '');
+    filterSelects.forEach(function (select) {
+      select.setAttribute('disabled', '');
     });
     filterFieldset.setAttribute('disabled', '');
 

@@ -33,8 +33,8 @@
 
   // gets an alias of all available features in the ad
   var getAllAvailableFeatures = function (offerFeatures, cardElement) {
-    offerFeatures.forEach(function (itemFeature) {
-      cardElement.querySelector('.popup__feature--' + itemFeature).textContent = mapFeaturesToAlias[itemFeature];
+    offerFeatures.forEach(function (feature) {
+      cardElement.querySelector('.popup__feature--' + feature).textContent = mapFeaturesToAlias[feature];
     });
 
     var featureBox = cardElement.querySelector('.popup__features');
@@ -53,17 +53,17 @@
   };
 
   // creates photos in popup
-  var createPopupPhoto = function (itemPhoto, popupPhotoBox) {
+  var createPopupPhoto = function (photo, popupPhotoBox) {
     var popupPhoto = popupPhotoBox.querySelector('.popup__photo').cloneNode(true);
-    popupPhoto.src = itemPhoto;
+    popupPhoto.src = photo;
     return popupPhoto;
   };
 
   // displays photos in popup
   var renderPopupPhotos = function (photos, popupPhotoBox) {
     var fragment = document.createDocumentFragment();
-    photos.forEach(function (itemPhoto) {
-      fragment.appendChild(createPopupPhoto(itemPhoto, popupPhotoBox));
+    photos.forEach(function (photo) {
+      fragment.appendChild(createPopupPhoto(photo, popupPhotoBox));
     });
 
     // cleans a container for photos
@@ -125,8 +125,8 @@
       }
 
       // gets an object index for an ad card
-      var indexAd = ads.findIndex(function (itemAd, index) {
-        if (itemAd.offer.title === adTitle) {
+      var indexAd = ads.findIndex(function (ad, index) {
+        if (ad.offer.title === adTitle) {
           return index + 1;
         }
         return false;

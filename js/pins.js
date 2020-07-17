@@ -22,8 +22,8 @@
   // renders pins on the page
   var render = function (ads) {
     var fragment = document.createDocumentFragment();
-    ads.forEach(function (itemAd, indexAd) {
-      fragment.appendChild(createPin(itemAd, indexAd));
+    ads.forEach(function (ad, index) {
+      fragment.appendChild(createPin(ad, index));
     });
     pinBox.appendChild(fragment);
     window.filterForm.turnOnFilter();

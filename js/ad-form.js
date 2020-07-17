@@ -15,7 +15,7 @@
   // ad form
   var adForm = document.querySelector('.ad-form');
   var adFormHeader = adForm.querySelector('.ad-form-header');
-  var adFormElements = adForm.querySelectorAll('.ad-form__element');
+  var adFormFieldsets = adForm.querySelectorAll('.ad-form__element');
 
   // ad form fields
   var inputTitle = adForm.querySelector('#title');
@@ -170,8 +170,8 @@
 
   // disable ad form controls
   adFormHeader.setAttribute('disabled', 'disabled');
-  adFormElements.forEach(function (itemFieldset) {
-    itemFieldset.setAttribute('disabled', 'disabled');
+  adFormFieldsets.forEach(function (fieldset) {
+    fieldset.setAttribute('disabled', 'disabled');
   });
 
 
