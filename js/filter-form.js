@@ -110,8 +110,8 @@
 
 
   window.filterForm = {
-    turnOnFilter: turnOnFilter,
-    turnOffFilter: turnOffFilter,
+    turnOn: turnOnFilter,
+    turnOff: turnOffFilter,
   };
 
 })();

@@ -2,14 +2,13 @@
 
 (function () {
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
-  var USER_AVATAR = 'avatar';
-  var HOUSING_PHOTO = 'photo';
 
   var adForm = document.querySelector('.ad-form');
 
   // user avatar
   var userAvatar = adForm.querySelector('.ad-form__field input[type=file]');
   var userAvatarPreview = adForm.querySelector('.ad-form-header__preview img');
+  var defaultAvatar = userAvatarPreview.src;
 
   // housing photo
   var housingPhoto = adForm.querySelector('.ad-form__input');
@@ -22,41 +21,36 @@
     });
   };
 
-  var readerPicture = function (file, pictureKind) {
-    var reader = new FileReader();
-
-    reader.addEventListener('load', function () {
-      if (pictureKind === USER_AVATAR) {
-        userAvatarPreview.src = reader.result;
-      }
-      if (pictureKind === HOUSING_PHOTO) {
-        var node = document.createElement('img');
-        node.classList.add('housing-photo');
-        node.src = reader.result;
-        housingPhotoPreview.appendChild(node);
-      }
-    });
-
-    reader.readAsDataURL(file);
-  };
-
   // handler of load a user avatar
   var onUserAvatarChange = function () {
     var file = userAvatar.files[0];
-    var matches = isPicture(file);
 
-    if (matches) {
-      readerPicture(file, USER_AVATAR);
+    if (isPicture(file)) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        userAvatarPreview.src = reader.result;
+      });
+
+      reader.readAsDataURL(file);
     }
   };
 
   // handler of load a housing photo
   var onHousingPhotoChange = function () {
     var file = housingPhoto.files[0];
-    var matches = isPicture(file);
 
-    if (matches) {
-      readerPicture(file, HOUSING_PHOTO);
+    if (isPicture(file)) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        var node = document.createElement('img');
+        node.classList.add('housing-photo');
+        node.src = reader.result;
+        housingPhotoPreview.appendChild(node);
+      });
+
+      reader.readAsDataURL(file);
     }
   };
 
@@ -64,8 +58,6 @@
     userAvatar.addEventListener('change', onUserAvatarChange);
     housingPhoto.addEventListener('change', onHousingPhotoChange);
   };
-
-  var defaultAvatar = userAvatarPreview.src;
 
   var removeEvents = function () {
     userAvatar.removeEventListener('change', onUserAvatarChange);

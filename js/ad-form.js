@@ -198,8 +198,8 @@
 
   window.adForm = {
     validateRoom: validateRoom,
-    turnOffAd: turnOffAd,
-    turnOnAd: turnOnAd,
+    turnOff: turnOffAd,
+    turnOn: turnOnAd,
   };
 
 })();

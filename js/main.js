@@ -18,7 +18,7 @@
     // open a map with ads
     map.classList.remove('map--faded');
 
-    window.adForm.turnOnAd();
+    window.adForm.turnOn();
 
     window.backend.load(onLoad, onError);
 
@@ -86,7 +86,7 @@
     var filterAds = ads.slice(0, window.const.PIN_COUNT);
     window.pins.render(filterAds);
     window.card.onCardOpen(filterAds);
-    window.filterForm.turnOnFilter();
+    window.filterForm.turnOn();
   };
 
   // get a block to insert popup
@@ -166,10 +166,10 @@
     map.classList.add('map--faded');
 
     // disable ad form controls
-    window.adForm.turnOffAd();
+    window.adForm.turnOff();
 
     // disable filter form controls
-    window.filterForm.turnOffFilter();
+    window.filterForm.turnOff();
 
     adForm.reset();
 
