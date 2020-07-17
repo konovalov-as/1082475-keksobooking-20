@@ -27,7 +27,7 @@
     isActivePage = false;
   };
 
-  // activates the page with a click
+  // activate the page with a click
   mainPin.addEventListener('mousedown', function (evt) {
     if (evt.button === window.const.MOUSE_LEFT_BUTTON) {
       if (isActivePage) {
@@ -37,7 +37,7 @@
     }
   });
 
-  // activates the page from the keyboard
+  // activate the page from the keyboard
   mainPin.addEventListener('keydown', function (evt) {
     if (evt.key === window.const.Key.ENTER) {
       if (isActivePage) {
@@ -47,7 +47,7 @@
     }
   });
 
-  // gets label coordinates
+  // get a label coordinates
   var getPinCoordinates = function (isRoundPin) {
     var xLeft = mainPin.style.left;
     var yTop = mainPin.style.top;
@@ -65,10 +65,10 @@
   };
   getPinCoordinates(true);
 
-  // receives offers from the server
+  // receive offers from the server
   var onLoad = function (offers) {
     window.ads = offers;
-    updateAds();
+    updateAds(window.ads);
   };
 
   var onError = function (errorMessage) {
@@ -80,49 +80,49 @@
   };
 
   // display the first five pins
-  var updateAds = function () {
-    var filterAds = window.ads.slice(0, window.const.PIN_COUNT);
+  var updateAds = function (ads) {
+    var filterAds = ads.slice(0, window.const.PIN_COUNT);
     window.pins.render(filterAds);
     window.card.onCardOpen(filterAds);
     window.filterForm.turnOnFilter();
   };
 
-  // gets a block to insert messages
-  var main = document.querySelector('main');
+  // get a block to insert popup
+  var mainContainer = document.querySelector('main');
 
-  // gets a success message template
-  var successPopup = document.querySelector('#success')
+  // get a success popup template
+  var successPopupTemplate = document.querySelector('#success')
     .content
     .querySelector('.success');
 
-  // gets a error message template
-  var errorPopup = document.querySelector('#error')
+  // get a error popup template
+  var errorPopupTemplate = document.querySelector('#error')
     .content
     .querySelector('.error');
 
-  var closePopupByKey = function (evt, typePopup) {
+  var closePopupByKey = function (evt, popup) {
     if (!evt.key === window.const.Key.ESCAPE) {
       return;
     }
-    if (typePopup) {
-      typePopup.remove();
+    if (popup) {
+      popup.remove();
     }
   };
 
   // successful form submission
   var onFormSuccess = function () {
-    renderMessage(successPopup);
+    renderPopup(successPopupTemplate);
 
-    // success message close handler
-    document.addEventListener('keydown', function (evt) {
-      closePopupByKey(evt, successBlock);
-    });
-
-    var successBlock = main.querySelector('.success');
-    successBlock.addEventListener('click', function (evt) {
-      if (evt.target && evt.target.matches('.success')) {
-        successBlock.remove();
+    var successContainer = mainContainer.querySelector('.success');
+    successContainer.addEventListener('click', function (evt) {
+      if (evt.target.matches('.success')) {
+        successContainer.remove();
       }
+
+      // success popup close handler
+      document.addEventListener('keydown', function () {
+        closePopupByKey(evt, successContainer);
+      });
     });
 
     deactivatePage();
@@ -130,28 +130,28 @@
 
   // error form submission
   var onFormError = function () {
-    renderMessage(errorPopup);
+    renderPopup(errorPopupTemplate);
 
-    // error message close handler
-    document.addEventListener('keydown', function (evt) {
-      closePopupByKey(evt, errorBlock);
-    });
-
-    var errorBlock = main.querySelector('.error');
-    errorBlock.addEventListener('click', function (evt) {
-      if (evt.target && evt.target.matches('.error') || evt.target.matches('.error__button')) {
-        errorBlock.parentElement.removeChild(errorBlock);
+    var errorContainer = mainContainer.querySelector('.error');
+    errorContainer.addEventListener('click', function (evt) {
+      if (evt.target.matches('.error') || evt.target.matches('.error__button')) {
+        errorContainer.remove();
       }
     });
+
+    // error popup close handler
+    document.addEventListener('keydown', function (evt) {
+      closePopupByKey(evt, errorContainer);
+    });
   };
 
-  // creates an ad label
-  var renderMessage = function (message) {
-    var messageBlock = message.cloneNode(true);
-    main.appendChild(messageBlock);
+  // create an ad label
+  var renderPopup = function (popup) {
+    var popupBlock = popup.cloneNode(true);
+    mainContainer.appendChild(popupBlock);
   };
 
-  // sends an ad form
+  // send an ad form
   adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
     window.backend.save(new FormData(adForm), onFormSuccess, onFormError);
@@ -185,7 +185,7 @@
     window.adForm.validateRoom();
   };
 
-  // resets an ad form
+  // reset an ad form
   var resetButton = adForm.querySelector('.ad-form__reset');
   resetButton.addEventListener('click', function () {
     deactivatePage();

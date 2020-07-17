@@ -1,29 +1,29 @@
 'use strict';
 
 (function () {
-  // gets top and bottom bounds of the map block
+  // get top and bottom bounds of the map block
   var YBound = {
     TOP: 130,
     BOTTOM: 630,
   };
 
-  var pinsBox = document.querySelector('.map__pins');
+  var pinContainer = document.querySelector('.map__pins');
   var mainPin = document.querySelector('.map__pin--main');
   var inputAddress = document.querySelector('#address');
 
-  // gets left and right bounds of the map block
+  // get left and right bounds of the map block
   var XBound = {
     left: 0,
-    right: pinsBox.offsetWidth,
+    right: pinContainer.offsetWidth,
   };
 
-  // sets left and top offset of the container
+  // set left and top offset of the container
   var PageOffset = {
     left: 0,
     top: 0,
   };
 
-  // writes the address in the address field
+  // write the address in the address field
   var setAddress = function () {
     var pinX = mainPin.offsetLeft + window.const.PinSize.SIDE_LENGTH / 2;
     var pinY = mainPin.offsetTop + window.const.PinSize.HEIGHT;
@@ -66,7 +66,7 @@
       evt.preventDefault();
       setAddress();
 
-      XBound.right = pinsBox.offsetWidth;
+      XBound.right = pinContainer.offsetWidth;
 
       PageOffset.left = evt.clientX - mainPin.offsetLeft;
       PageOffset.top = evt.clientY - mainPin.offsetTop;

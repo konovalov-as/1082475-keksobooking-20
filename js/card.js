@@ -1,19 +1,19 @@
 'use strict';
 
-// creates ad cards
+// create ad cards
 (function () {
-  // gets a block to insert an ad card
-  var cardBox = document.querySelector('.map');
+  // get a block to insert an ad card
+  var map = document.querySelector('.map');
 
-  // gets a card template for an ad card
+  // get a card template for an ad card
   var cardTemplate = document.querySelector('#card')
     .content
     .querySelector('.map__card');
 
-  // gets a element before which an ad card will be inserted
+  // get an element before which an ad card will be inserted
   var filtersContainer = document.querySelector('.map__filters-container');
 
-  // gets alias housing type
+  // get alias housing type
   var mapHousingTypeToAlias = {
     flat: 'Квартира',
     bungalo: 'Бунгало',
@@ -21,7 +21,7 @@
     palace: 'Дворец',
   };
 
-  // gets alias features
+  // get alias features
   var mapFeaturesToAlias = {
     wifi: 'Wi-Fi',
     dishwasher: 'Посудомоечная машина',
@@ -31,50 +31,50 @@
     conditioner: 'Кондиционер',
   };
 
-  // gets an alias of all available features in the ad
+  // get an alias of all available features in the ad
   var getAllAvailableFeatures = function (offerFeatures, cardElement) {
     offerFeatures.forEach(function (feature) {
       cardElement.querySelector('.popup__feature--' + feature).textContent = mapFeaturesToAlias[feature];
     });
 
-    var featureBox = cardElement.querySelector('.popup__features');
-    var featureChildren = featureBox.children;
+    var featureContainer = cardElement.querySelector('.popup__features');
+    var featureChildren = featureContainer.children;
 
     if (offerFeatures.length === 0) {
-      featureBox.parentElement.removeChild(featureBox);
+      featureContainer.remove();
     } else {
       for (var i = featureChildren.length - 1; i >= 0; i--) {
         var featureChild = featureChildren[i];
         if (featureChild.textContent === '') {
-          featureChild.parentElement.removeChild(featureChild);
+          featureChild.remove();
         }
       }
     }
   };
 
-  // creates photos in popup
-  var createPopupPhoto = function (photo, popupPhotoBox) {
-    var popupPhoto = popupPhotoBox.querySelector('.popup__photo').cloneNode(true);
-    popupPhoto.src = photo;
-    return popupPhoto;
+  // create photos in popup
+  var createPhoto = function (photo, photoContainer) {
+    var photoElement = photoContainer.querySelector('.popup__photo').cloneNode(true);
+    photoElement.src = photo;
+    return photoElement;
   };
 
-  // displays photos in popup
-  var renderPopupPhotos = function (photos, popupPhotoBox) {
+  // display photos in the card
+  var renderPhotos = function (photos, photoContainer) {
     var fragment = document.createDocumentFragment();
     photos.forEach(function (photo) {
-      fragment.appendChild(createPopupPhoto(photo, popupPhotoBox));
+      fragment.appendChild(createPhoto(photo, photoContainer));
     });
 
-    // cleans a container for photos
-    popupPhotoBox.textContent = '';
-    // inserts photos into a container
-    popupPhotoBox.appendChild(fragment);
+    // clean a container for photos
+    photoContainer.innerHTML = '';
+    // insert photos into a container
+    photoContainer.appendChild(fragment);
   };
 
-  // creates an ad card
+  // create an ad card
   var createCard = function (ad) {
-    // fills in an ad card template
+    // fill in an ad card template
     var cardElement = cardTemplate.cloneNode(true);
 
     cardElement.querySelector('.popup__title').textContent = ad.offer.title;
@@ -91,17 +91,17 @@
 
     cardElement.querySelector('.popup__description').textContent = ad.offer.description;
 
-    var popupPhotoBox = cardElement.querySelector('.popup__photos');
-    renderPopupPhotos(ad.offer.photos, popupPhotoBox);
+    var photoContainer = cardElement.querySelector('.popup__photos');
+    renderPhotos(ad.offer.photos, photoContainer);
 
     cardElement.querySelector('.popup__avatar').src = ad.author.avatar;
 
     return cardElement;
   };
 
-  // displays ad cards
+  // display ad cards
   var renderCard = function (ad) {
-    cardBox.insertBefore(createCard(ad), filtersContainer);
+    map.insertBefore(createCard(ad), filtersContainer);
   };
 
   var removeActivePin = function () {
@@ -111,12 +111,12 @@
     }
   };
 
-  // opens an ad card
+  // open an ad card
   var onContainerPinPress = function (evt, ads) {
-    // selects only pins
-    if (evt.target && evt.target.matches('.map__pin:not(.map__pin--main)') || evt.target.matches('.map__pin:not(.map__pin--main) img')) {
+    // select only pins
+    if (evt.target.matches('.map__pin:not(.map__pin--main)') || evt.target.matches('.map__pin:not(.map__pin--main) img')) {
 
-      // gets an ad title
+      // get an ad title
       var adTitle = evt.target.alt;
       var activePin = evt.target;
 
@@ -124,7 +124,7 @@
         adTitle = evt.target.children[0].alt;
       }
 
-      // gets an object index for an ad card
+      // get an object index for an ad card
       var indexAd = ads.findIndex(function (ad, index) {
         if (ad.offer.title === adTitle) {
           return index + 1;
@@ -133,7 +133,7 @@
       });
 
       // only one ad card can be opened at the time
-      if (cardBox.childElementCount === window.const.MAP_BLOCK_ELEMENT_CONT) {
+      if (map.childElementCount === window.const.MAP_BLOCK_ELEMENT_CONT) {
         renderCard(ads[indexAd]);
         activePin.classList.add('map__pin--active');
         onCardClose();
@@ -148,18 +148,18 @@
     }
   };
 
-  var pinBox = document.querySelector('.map__pins');
-  // adds a card open handler
+  var pinContainer = document.querySelector('.map__pins');
+  // add a card open handler
   var onCardOpen = function (ads) {
 
-    // adds a mouse click handler
-    pinBox.addEventListener('click', function (evt) {
+    // add a mouse click handler
+    pinContainer.addEventListener('click', function (evt) {
       onContainerPinPress(evt, ads);
     });
 
   };
 
-  // closes an ad card
+  // close an ad card
   var closeCard = function () {
     var cardAd = document.querySelector('.map .map__card');
     if (cardAd) {
@@ -175,14 +175,14 @@
     }
   };
 
-  // adds a card close handler
+  // add a card close handler
   var onCardClose = function () {
     var closeCardButton = document.querySelector('.map__card .popup__close');
 
-    // adds a mouse click handler
+    // add a mouse click handler
     closeCardButton.addEventListener('click', closeCard);
 
-    // adds Esc key handler
+    // add Esc key handler
     document.addEventListener('keydown', closeCardByKey);
   };
 

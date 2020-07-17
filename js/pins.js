@@ -1,36 +1,36 @@
 'use strict';
 
 (function () {
-  // gets a block for inserting ad tags
-  var pinBox = document.querySelector('.map__pins');
+  // get a block for inserting ad tags
+  var pinContainer = document.querySelector('.map__pins');
 
-  // gets a pin template for an ad
-  var mapPinTemplate = document.querySelector('#pin')
+  // get a pin template for an ad
+  var pinTemplate = document.querySelector('#pin')
     .content
     .querySelector('.map__pin');
 
-  // creates an ad pin
+  // create an ad pin
   var createPin = function (ad) {
-    var mapPinElement = mapPinTemplate.cloneNode(true);
-    mapPinElement.style.left = ad.location.x - window.const.PinSize.SIDE_LENGTH / 2 + 'px';
-    mapPinElement.style.top = ad.location.y - window.const.PinSize.HEIGHT + 'px';
-    mapPinElement.querySelector('img').src = ad.author.avatar;
-    mapPinElement.querySelector('img').alt = ad.offer.title;
-    return mapPinElement;
+    var pinElement = pinTemplate.cloneNode(true);
+    pinElement.style.left = ad.location.x - window.const.PinSize.SIDE_LENGTH / 2 + 'px';
+    pinElement.style.top = ad.location.y - window.const.PinSize.HEIGHT + 'px';
+    pinElement.querySelector('img').src = ad.author.avatar;
+    pinElement.querySelector('img').alt = ad.offer.title;
+    return pinElement;
   };
 
-  // renders pins on the page
-  var render = function (ads) {
+  // render pins on the page
+  var renderPins = function (ads) {
     var fragment = document.createDocumentFragment();
-    ads.forEach(function (ad, index) {
-      fragment.appendChild(createPin(ad, index));
+    ads.forEach(function (ad) {
+      fragment.appendChild(createPin(ad));
     });
-    pinBox.appendChild(fragment);
+    pinContainer.appendChild(fragment);
   };
 
-  // deletes pins
-  var remove = function () {
-    var pins = pinBox.querySelectorAll('.map__pin:not(.map__pin--main)');
+  // delete pins
+  var removePins = function () {
+    var pins = pinContainer.querySelectorAll('.map__pin:not(.map__pin--main)');
 
     pins.forEach(function (pin) {
       pin.remove();
@@ -39,8 +39,8 @@
 
 
   window.pins = {
-    render: render,
-    remove: remove,
+    render: renderPins,
+    remove: removePins,
   };
 
 })();

@@ -14,12 +14,12 @@
     HIGH: 50000,
   };
 
-  // gets a form with filters
+  // get a form with filters
   var filterForm = document.querySelector('.map__filters');
   var filterSelects = filterForm.querySelectorAll('select');
   var filterFieldset = filterForm.querySelector('fieldset');
 
-  // gets filter fields
+  // get filter fields
   var housingType = filterForm.querySelector('#housing-type');
   var housingPrice = filterForm.querySelector('#housing-price');
   var housingRoom = filterForm.querySelector('#housing-rooms');
