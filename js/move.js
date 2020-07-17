@@ -62,18 +62,19 @@
   };
 
   var onMainPinMousedown = function (evt) {
-    if (evt.button === window.const.MOUSE_LEFT_BUTTON) {
-      evt.preventDefault();
-      setAddress();
-
-      XBound.right = pinContainer.offsetWidth;
-
-      PageOffset.left = evt.clientX - mainPin.offsetLeft;
-      PageOffset.top = evt.clientY - mainPin.offsetTop;
-
-      document.addEventListener('mousemove', onMainPinMousemove);
-      document.addEventListener('mouseup', onMainPinMouseup);
+    if (!(evt.button === window.const.MOUSE_LEFT_BUTTON)) {
+      return;
     }
+    evt.preventDefault();
+    setAddress();
+
+    XBound.right = pinContainer.offsetWidth;
+
+    PageOffset.left = evt.clientX - mainPin.offsetLeft;
+    PageOffset.top = evt.clientY - mainPin.offsetTop;
+
+    document.addEventListener('mousemove', onMainPinMousemove);
+    document.addEventListener('mouseup', onMainPinMouseup);
   };
 
   var onMainPinMousemove = function (moveEvt) {

@@ -29,22 +29,24 @@
 
   // activate the page with a click
   mainPin.addEventListener('mousedown', function (evt) {
-    if (evt.button === window.const.MOUSE_LEFT_BUTTON) {
-      if (isActivePage) {
-        activatePage();
-      }
-      getPinCoordinates(false);
+    if (!(evt.button === window.const.MOUSE_LEFT_BUTTON)) {
+      return;
     }
+    if (isActivePage) {
+      activatePage();
+    }
+    getPinCoordinates(false);
   });
 
   // activate the page from the keyboard
   mainPin.addEventListener('keydown', function (evt) {
-    if (evt.key === window.const.Key.ENTER) {
-      if (isActivePage) {
-        activatePage();
-      }
-      getPinCoordinates(false);
+    if (!(evt.key === window.const.Key.ENTER)) {
+      return;
     }
+    if (isActivePage) {
+      activatePage();
+    }
+    getPinCoordinates(false);
   });
 
   // get a label coordinates
@@ -115,14 +117,15 @@
 
     var successContainer = mainContainer.querySelector('.success');
     successContainer.addEventListener('click', function (evt) {
-      if (evt.target.matches('.success')) {
-        successContainer.remove();
+      if (!evt.target.matches('.success')) {
+        return;
       }
+      successContainer.remove();
+    });
 
-      // success popup close handler
-      document.addEventListener('keydown', function () {
-        closePopupByKey(evt, successContainer);
-      });
+    // success popup close handler
+    document.addEventListener('keydown', function (evt) {
+      closePopupByKey(evt, successContainer);
     });
 
     deactivatePage();
@@ -134,9 +137,10 @@
 
     var errorContainer = mainContainer.querySelector('.error');
     errorContainer.addEventListener('click', function (evt) {
-      if (evt.target.matches('.error') || evt.target.matches('.error__button')) {
-        errorContainer.remove();
+      if (!(evt.target.matches('.error') || evt.target.matches('.error__button'))) {
+        return;
       }
+      errorContainer.remove();
     });
 
     // error popup close handler

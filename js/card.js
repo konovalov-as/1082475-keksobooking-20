@@ -42,12 +42,12 @@
 
     if (offerFeatures.length === 0) {
       featureContainer.remove();
-    } else {
-      for (var i = featureChildren.length - 1; i >= 0; i--) {
-        var featureChild = featureChildren[i];
-        if (featureChild.textContent === '') {
-          featureChild.remove();
-        }
+      return;
+    }
+    for (var i = featureChildren.length - 1; i >= 0; i--) {
+      var featureChild = featureChildren[i];
+      if (featureChild.textContent === '') {
+        featureChild.remove();
       }
     }
   };
