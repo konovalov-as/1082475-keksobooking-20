@@ -13,7 +13,7 @@
   var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
 
-  var isActivePage = true;
+  var isActivePage = false;
   var activatePage = function () {
     // open a map with ads
     map.classList.remove('map--faded');
@@ -24,7 +24,7 @@
 
     window.imageLoad.addEvents();
 
-    isActivePage = false;
+    isActivePage = true;
   };
 
   // activate the page with a click
@@ -32,7 +32,7 @@
     if (!(evt.button === window.const.MOUSE_LEFT_BUTTON)) {
       return;
     }
-    if (isActivePage) {
+    if (!isActivePage) {
       activatePage();
     }
     getPinCoordinates(false);
@@ -43,7 +43,7 @@
     if (!(evt.key === window.const.Key.ENTER)) {
       return;
     }
-    if (isActivePage) {
+    if (!isActivePage) {
       activatePage();
     }
     getPinCoordinates(false);
@@ -57,8 +57,8 @@
     var x;
     var y;
 
-    x = Math.floor(parseInt(xLeft.substr(0, [xLeft.length - 2]), 10) + halfPin);
-    y = Math.floor(parseInt(yTop.substr(0, [yTop.length - 2]), 10) + halfPin);
+    x = Math.floor(parseInt(xLeft, 10) + halfPin);
+    y = Math.floor(parseInt(yTop, 10) + halfPin);
 
     if (!isRoundPin) {
       y += halfPin + window.const.PinSize.HEIGHT_PIN;
@@ -184,7 +184,7 @@
 
     window.pins.remove();
 
-    isActivePage = true;
+    isActivePage = false;
 
     window.adForm.validateRoom();
   };
