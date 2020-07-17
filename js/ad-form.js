@@ -1,13 +1,23 @@
 'use strict';
 
 (function () {
+  var RoomCount = {
+    HUNDRED: 100,
+    ONE: 1,
+    TWO: 2,
+    THREE: 3,
+  };
+
+  var GuestCount = {
+    NOT_GUESTS: 0,
+  };
+
   // ad form
   var adForm = document.querySelector('.ad-form');
   var adFormHeader = adForm.querySelector('.ad-form-header');
   var adFormElements = adForm.querySelectorAll('.ad-form__element');
 
-  // fields of ad form
-  var inputAddress = adForm.querySelector('#address');
+  // ad form fields
   var inputTitle = adForm.querySelector('#title');
   var inputPrice = adForm.querySelector('#price');
   var selectType = adForm.querySelector('#type');
@@ -17,7 +27,7 @@
   var selectCapacity = adForm.querySelector('#capacity');
 
   // fields validation
-  // header ad
+  // header an ad
   var minTitleLength = inputTitle.minLength;
   var maxTitleLength = inputTitle.maxLength;
 
@@ -87,7 +97,7 @@
     palace: 10000,
   };
 
-  // sets the minimum field and placeholder 'price for night'
+  // set the minimum value of the field and placeholder 'price for night'
   var setMinPrice = function (minPrice) {
     inputPrice.setAttribute('min', minPrice);
     inputPrice.setAttribute('placeholder', minPrice);
@@ -117,25 +127,25 @@
     changeCheckIn(selectCheckOut.value);
   });
 
-  // checks the number of guests with the number of rooms
+  // check the number of guests with the number of rooms
   var validateCapacity = function (roomNumber, capacity) {
-    if (roomNumber === '100' & capacity !== '0') {
+    if (roomNumber === RoomCount.HUNDRED & capacity !== GuestCount.NOT_GUESTS) {
       selectCapacity.setCustomValidity('100 комнат не для гостей');
       return;
     }
-    if (roomNumber !== '100' && capacity === '0') {
+    if (roomNumber !== RoomCount.HUNDRED && capacity === GuestCount.NOT_GUESTS) {
       selectCapacity.setCustomValidity('Комнаты не для гостей');
       return;
     }
-    if (roomNumber === '1' && roomNumber < capacity) {
+    if (roomNumber === RoomCount.ONE && roomNumber < capacity) {
       selectCapacity.setCustomValidity('1 комната для 1 гостя');
       return;
     }
-    if (roomNumber === '2' && roomNumber < capacity) {
+    if (roomNumber === RoomCount.TWO && roomNumber < capacity) {
       selectCapacity.setCustomValidity('2 комнаты для 2 гостей или для 1 гостя');
       return;
     }
-    if (roomNumber === '3' && roomNumber < capacity) {
+    if (roomNumber === RoomCount.THREE && roomNumber < capacity) {
       selectCapacity.setCustomValidity('3 комнаты для 3 гостей, для 2 гостей или для 1 гостя');
       return;
     }
@@ -144,8 +154,8 @@
 
   // checks the number of rooms
   var validateRoom = function () {
-    var roomNumber = selectRoomNumber.value;
-    var capacity = selectCapacity.value;
+    var roomNumber = +selectRoomNumber.value;
+    var capacity = +selectCapacity.value;
     validateCapacity(roomNumber, capacity);
   };
   validateRoom();
@@ -158,7 +168,7 @@
     validateRoom();
   });
 
-  // disables ad form controls
+  // disable ad form controls
   adFormHeader.setAttribute('disabled', 'disabled');
   adFormElements.forEach(function (itemFieldset) {
     itemFieldset.setAttribute('disabled', 'disabled');
@@ -166,10 +176,6 @@
 
 
   window.adForm = {
-    inputAddress: inputAddress,
-    form: adForm,
-    adFormHeader: adFormHeader,
-    adFormElements: adFormElements,
     validateRoom: validateRoom,
   };
 

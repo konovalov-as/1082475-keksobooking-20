@@ -1,9 +1,11 @@
 'use strict';
 
 (function () {
+  var RESPONSE_TYPE = 'json';
+
   var load = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
+    xhr.responseType = RESPONSE_TYPE;
 
     xhr.addEventListener('load', function () {
       if (xhr.status === window.const.StatusCode.OK) {
@@ -28,7 +30,7 @@
 
   var save = function (data, onLoad, onError) {
     var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
+    xhr.responseType = RESPONSE_TYPE;
 
     xhr.addEventListener('load', function () {
       if (xhr.status === window.const.StatusCode.OK) {

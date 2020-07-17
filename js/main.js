@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var adForm = window.adForm.form;
+  var adForm = document.querySelector('.ad-form');
   var adFormHeader = adForm.querySelector('.ad-form-header');
   var adFormElements = adForm.querySelectorAll('.ad-form__element');
   var inputAddress = adForm.querySelector('#address');

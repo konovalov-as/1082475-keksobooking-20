@@ -6,7 +6,7 @@
   var USER_AVATAR = window.const.USER_AVATAR;
   var HOUSING_PHOTO = window.const.HOUSING_PHOTO;
 
-  var adForm = window.adForm.form;
+  var adForm = document.querySelector('.ad-form');
 
   // user avatar
   var userAvatar = adForm.querySelector('.ad-form__field input[type=file]');
