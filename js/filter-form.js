@@ -96,11 +96,10 @@
       }
     }
 
-    window.card.closeCard();
+    window.card.onCardCloseClick();
     window.pins.remove();
 
     window.pins.render(filterAds);
-    window.card.onCardOpen(filterAds);
   };
 
   var onFilterChange = function () {

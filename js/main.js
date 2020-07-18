@@ -67,8 +67,16 @@
   };
   getPinCoordinates(true);
 
-  // receive offers from the server
-  var onLoad = function (offers) {
+  // get offers from the server
+  var onLoad = function (ads) {
+    var offers = [];
+
+    ads.forEach(function (ad) {
+      if (ad.offer) {
+        offers.push(ad);
+      }
+    });
+
     window.ads = offers;
     updateAds(window.ads);
   };
@@ -85,7 +93,6 @@
   var updateAds = function (ads) {
     var filterAds = ads.slice(0, window.const.PIN_COUNT);
     window.pins.render(filterAds);
-    window.card.onCardOpen(filterAds);
     window.filterForm.turnOn();
   };
 
@@ -180,7 +187,7 @@
     mainPin.style.left = PinСoordinate.LEFT + 'px';
     mainPin.style.top = PinСoordinate.TOP + 'px';
 
-    window.card.closeCard();
+    window.card.onCardCloseClick();
 
     window.pins.remove();
 

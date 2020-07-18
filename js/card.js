@@ -31,42 +31,51 @@
     conditioner: 'Кондиционер',
   };
 
-  // get an alias of all available features in the ad
-  var getAllAvailableFeatures = function (offerFeatures, cardElement) {
-    offerFeatures.forEach(function (feature) {
-      cardElement.querySelector('.popup__feature--' + feature).textContent = mapFeaturesToAlias[feature];
-    });
+  // create a feature element
+  var createFeature = function (feature, featureContainer) {
+    var featureElement = featureContainer.querySelector('.popup__feature--' + feature).cloneNode(true);
+    featureElement.textContent = mapFeaturesToAlias[feature];
+    return featureElement;
+  };
 
-    var featureContainer = cardElement.querySelector('.popup__features');
-    var featureChildren = featureContainer.children;
-
-    if (offerFeatures.length === 0) {
+  // render features in the card
+  var renderFeatures = function (features, featureContainer) {
+    if (features.length === 0) {
       featureContainer.remove();
       return;
     }
-    for (var i = featureChildren.length - 1; i >= 0; i--) {
-      var featureChild = featureChildren[i];
-      if (featureChild.textContent === '') {
-        featureChild.remove();
-      }
-    }
+
+    var fragment = document.createDocumentFragment();
+    features.forEach(function (feature) {
+      fragment.appendChild(createFeature(feature, featureContainer));
+    });
+
+    // clean a feature container
+    featureContainer.innerHTML = '';
+    // insert photos into a container
+    featureContainer.appendChild(fragment);
   };
 
-  // create photos in popup
+  // create a photo element
   var createPhoto = function (photo, photoContainer) {
     var photoElement = photoContainer.querySelector('.popup__photo').cloneNode(true);
     photoElement.src = photo;
     return photoElement;
   };
 
-  // display photos in the card
+  // render photos in the card
   var renderPhotos = function (photos, photoContainer) {
+    if (photos.length === 0) {
+      photoContainer.remove();
+      return;
+    }
+
     var fragment = document.createDocumentFragment();
     photos.forEach(function (photo) {
       fragment.appendChild(createPhoto(photo, photoContainer));
     });
 
-    // clean a container for photos
+    // clean a photo container
     photoContainer.innerHTML = '';
     // insert photos into a container
     photoContainer.appendChild(fragment);
@@ -87,7 +96,8 @@
     cardElement.querySelector('.popup__text--capacity').textContent = ad.offer.rooms + ' комнаты для ' + ad.offer.guests + ' гостей';
     cardElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + ad.offer.checkin + ', выезд до ' + ad.offer.checkout;
 
-    getAllAvailableFeatures(ad.offer.features, cardElement);
+    var featureContainer = cardElement.querySelector('.popup__features');
+    renderFeatures(ad.offer.features, featureContainer);
 
     cardElement.querySelector('.popup__description').textContent = ad.offer.description;
 
@@ -96,10 +106,40 @@
 
     cardElement.querySelector('.popup__avatar').src = ad.author.avatar;
 
+    addListeners(cardElement);
+
     return cardElement;
   };
 
-  // display ad cards
+  // a card closing handler by click
+  var onCardCloseClick = function () {
+    var card = document.querySelector('.map .map__card');
+    if (card) {
+      card.remove();
+    }
+    removeActivePin();
+  };
+
+  // a card closing handler by Esc key
+  var onDocumentPress = function (evt) {
+    if (evt.key === window.const.Key.ESCAPE) {
+      onCardCloseClick();
+      document.removeEventListener('keydown', onDocumentPress);
+    }
+  };
+
+  // add card close handlers
+  var addListeners = function (cardElement) {
+    var cardCloseButton = cardElement.querySelector('.map__card .popup__close');
+
+    // add a mouse click handler
+    cardCloseButton.addEventListener('click', onCardCloseClick);
+
+    // add an Esc key handler
+    document.addEventListener('keydown', onDocumentPress);
+  };
+
+  // display an ad card
   var renderCard = function (ad) {
     map.insertBefore(createCard(ad), filtersContainer);
   };
@@ -112,84 +152,44 @@
   };
 
   // open an ad card
-  var onContainerPinPress = function (evt, ads) {
+  var onMapClick = function (evt) {
     // select only pins
-    if (evt.target.matches('.map__pin:not(.map__pin--main)') || evt.target.matches('.map__pin:not(.map__pin--main) img')) {
-
-      // get an ad title
-      var adTitle = evt.target.alt;
-      var activePin = evt.target;
-
-      if (evt.target.matches('.map__pin:not(.map__pin--main)')) {
-        adTitle = evt.target.children[0].alt;
-      }
-
-      // get an object index for an ad card
-      var indexAd = ads.findIndex(function (ad, index) {
-        if (ad.offer.title === adTitle) {
-          return index + 1;
-        }
-        return false;
-      });
-
-      // only one ad card can be opened at the time
-      if (map.childElementCount === window.const.MAP_BLOCK_ELEMENT_CONT) {
-        renderCard(ads[indexAd]);
-        activePin.classList.add('map__pin--active');
-        onCardClose();
-        return;
-      }
-      var cardAd = document.querySelector('.map .map__card');
-      cardAd.parentElement.removeChild(cardAd);
-      renderCard(ads[indexAd]);
-      removeActivePin();
-      activePin.classList.add('map__pin--active');
-      onCardClose();
+    if (!(evt.target.matches('.map__pin:not(.map__pin--main)') || evt.target.matches('.map__pin:not(.map__pin--main) img'))) {
+      return;
     }
-  };
 
-  var pinContainer = document.querySelector('.map__pins');
-  // add a card open handler
-  var onCardOpen = function (ads) {
+    // get an ad title and set an active pin
+    var adTitle;
+    var activePin;
 
-    // add a mouse click handler
-    pinContainer.addEventListener('click', function (evt) {
-      onContainerPinPress(evt, ads);
+    // if target is a button
+    if (evt.target.matches('.map__pin:not(.map__pin--main)')) {
+      adTitle = evt.target.children[0].alt;
+      activePin = evt.target;
+    }
+    // if target is a image
+    if (evt.target.matches('.map__pin:not(.map__pin--main) img')) {
+      adTitle = evt.target.alt;
+      activePin = evt.target.parentElement;
+    }
+
+    // get an ad and render an ad
+    var offer = window.ads.find(function (ad) {
+      return ad.offer.title === adTitle;
     });
 
+    onCardCloseClick();
+    activePin.classList.add('map__pin--active');
+    renderCard(offer);
   };
 
-  // close an ad card
-  var closeCard = function () {
-    var cardAd = document.querySelector('.map .map__card');
-    if (cardAd) {
-      cardAd.parentElement.removeChild(cardAd);
-    }
-    removeActivePin();
-  };
-
-  var closeCardByKey = function (evt) {
-    if (evt.key === window.const.Key.ESCAPE) {
-      closeCard();
-      document.removeEventListener('keydown', closeCardByKey);
-    }
-  };
-
-  // add a card close handler
-  var onCardClose = function () {
-    var closeCardButton = document.querySelector('.map__card .popup__close');
-
-    // add a mouse click handler
-    closeCardButton.addEventListener('click', closeCard);
-
-    // add Esc key handler
-    document.addEventListener('keydown', closeCardByKey);
-  };
+  // add a click handler on pin container
+  var pinContainer = document.querySelector('.map__pins');
+  pinContainer.addEventListener('click', onMapClick);
 
 
   window.card = {
-    onCardOpen: onCardOpen,
-    closeCard: closeCard,
+    onCardCloseClick: onCardCloseClick,
   };
 
 })();
