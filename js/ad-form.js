@@ -38,7 +38,7 @@
     adForm.classList.remove('ad-form--disabled');
 
     // set the read-only attribute of the address field
-    inputAddress.setAttribute('readonly', 'readonly');
+    inputAddress.readOnly = true;
   };
 
   // turn off ad form controls
