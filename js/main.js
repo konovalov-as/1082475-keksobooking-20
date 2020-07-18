@@ -27,7 +27,7 @@
     isActivePage = true;
   };
 
-  // activate the page with a click
+  // activate the page by a click
   mainPin.addEventListener('mousedown', function (evt) {
     if (!(evt.button === window.const.MOUSE_LEFT_BUTTON)) {
       return;
@@ -38,7 +38,7 @@
     getPinCoordinates(false);
   });
 
-  // activate the page from the keyboard
+  // activate the page by an Esc key
   mainPin.addEventListener('keydown', function (evt) {
     if (!(evt.key === window.const.Key.ENTER)) {
       return;
@@ -67,7 +67,7 @@
   };
   getPinCoordinates(true);
 
-  // get offers from the server
+  // success callback for get offers from the server
   var onLoad = function (ads) {
     var offers = [];
 
@@ -81,6 +81,7 @@
     updateAds(window.ads);
   };
 
+  // error callback for get offers from the server
   var onError = function (errorMessage) {
     var node = document.createElement('div');
     node.classList.add('error-message');
@@ -96,7 +97,7 @@
     window.filterForm.turnOn();
   };
 
-  // get a block to insert popup
+  // get a container to insert a popup
   var mainContainer = document.querySelector('main');
 
   // get a success popup template
@@ -118,10 +119,11 @@
     }
   };
 
-  // successful form submission
+  // success callback for send an offer to the server
   var onFormSuccess = function () {
     renderPopup(successPopupTemplate);
 
+    // close a popup by a click
     var successContainer = mainContainer.querySelector('.success');
     successContainer.addEventListener('click', function (evt) {
       if (!evt.target.matches('.success')) {
@@ -130,18 +132,23 @@
       successContainer.remove();
     });
 
-    // success popup close handler
-    document.addEventListener('keydown', function (evt) {
+    // close a popup by an Esc key
+    var onSuccessPopupPress = function (evt) {
       closePopupByKey(evt, successContainer);
-    });
+      document.removeEventListener('keydown', onSuccessPopupPress);
+    };
+
+    // success popup close handler
+    document.addEventListener('keydown', onSuccessPopupPress);
 
     deactivatePage();
   };
 
-  // error form submission
+  // error callback for send an offer to the server
   var onFormError = function () {
     renderPopup(errorPopupTemplate);
 
+    // close a popup by a click
     var errorContainer = mainContainer.querySelector('.error');
     errorContainer.addEventListener('click', function (evt) {
       if (!(evt.target.matches('.error') || evt.target.matches('.error__button'))) {
@@ -150,10 +157,14 @@
       errorContainer.remove();
     });
 
-    // error popup close handler
-    document.addEventListener('keydown', function (evt) {
+    // close a popup by an Esc key
+    var onErrorPopupPress = function (evt) {
       closePopupByKey(evt, errorContainer);
-    });
+      document.removeEventListener('keydown', onErrorPopupPress);
+    };
+
+    // error popup close handler
+    document.addEventListener('keydown', onErrorPopupPress);
   };
 
   // create an ad label
@@ -169,7 +180,7 @@
   });
 
   var deactivatePage = function () {
-    // close a map with ads
+    // hide a map with ads
     map.classList.add('map--faded');
 
     // disable ad form controls
