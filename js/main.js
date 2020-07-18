@@ -223,8 +223,8 @@
 
     inputAddress.value = PinСoordinate.LEFT + window.const.PinSize.SIDE_LENGTH / 2 + ', ' + (PinСoordinate.TOP + window.const.PinSize.SIDE_LENGTH / 2);
 
-    mainPin.style.left = PinСoordinate.LEFT + 'px';
-    mainPin.style.top = PinСoordinate.TOP + 'px';
+    mainPin.style.left = PinСoordinate.LEFT + window.const.CSS_UNITS;
+    mainPin.style.top = PinСoordinate.TOP + window.const.CSS_UNITS;
 
     window.card.onCardCloseClick();
 

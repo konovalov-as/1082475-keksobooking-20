@@ -38,25 +38,25 @@
 
     // set limits on the X coordinate
     if (endCoord.x + window.const.PinSize.SIDE_LENGTH / 2 <= XBound.left) {
-      mainPin.style.left = XBound.left - window.const.PinSize.SIDE_LENGTH / 2 + 'px';
+      mainPin.style.left = XBound.left - window.const.PinSize.SIDE_LENGTH / 2 + window.const.CSS_UNITS;
       return;
     }
     if (endCoord.x + window.const.PinSize.SIDE_LENGTH / 2 >= XBound.right) {
-      mainPin.style.left = XBound.right - window.const.PinSize.SIDE_LENGTH / 2 + 'px';
+      mainPin.style.left = XBound.right - window.const.PinSize.SIDE_LENGTH / 2 + window.const.CSS_UNITS;
       return;
     }
-    mainPin.style.left = endCoord.x + 'px';
+    mainPin.style.left = endCoord.x + window.const.CSS_UNITS;
 
     // set limits on the Y coordinate
     if (endCoord.y + window.const.PinSize.HEIGHT <= YBound.TOP) {
-      mainPin.style.top = YBound.TOP - window.const.PinSize.HEIGHT + 'px';
+      mainPin.style.top = YBound.TOP - window.const.PinSize.HEIGHT + window.const.CSS_UNITS;
       return;
     }
     if (endCoord.y + window.const.PinSize.HEIGHT >= YBound.BOTTOM) {
-      mainPin.style.top = YBound.BOTTOM - window.const.PinSize.HEIGHT + 'px';
+      mainPin.style.top = YBound.BOTTOM - window.const.PinSize.HEIGHT + window.const.CSS_UNITS;
       return;
     }
-    mainPin.style.top = endCoord.y + 'px';
+    mainPin.style.top = endCoord.y + window.const.CSS_UNITS;
 
     setAddress();
   };

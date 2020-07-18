@@ -12,8 +12,8 @@
   // create an ad pin
   var createPin = function (ad) {
     var pinElement = pinTemplate.cloneNode(true);
-    pinElement.style.left = ad.location.x - window.const.PinSize.SIDE_LENGTH / 2 + 'px';
-    pinElement.style.top = ad.location.y - window.const.PinSize.HEIGHT + 'px';
+    pinElement.style.left = ad.location.x - window.const.PinSize.SIDE_LENGTH / 2 + window.const.CSS_UNITS;
+    pinElement.style.top = ad.location.y - window.const.PinSize.HEIGHT + window.const.CSS_UNITS;
     pinElement.querySelector('img').src = ad.author.avatar;
     pinElement.querySelector('img').alt = ad.offer.title;
     return pinElement;
