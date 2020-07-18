@@ -67,6 +67,8 @@
   };
   getPinCoordinates(true);
 
+
+  // gets ads from the server
   // success callback for get offers from the server
   var onLoad = function (ads) {
     var offers = [];
@@ -81,21 +83,13 @@
     updateAds(window.ads);
   };
 
-  // error callback for get offers from the server
-  var onError = function (errorMessage) {
-    var node = document.createElement('div');
-    node.classList.add('error-message');
-
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
-  };
-
   // display the first five pins
   var updateAds = function (ads) {
     var filterAds = ads.slice(0, window.const.PIN_COUNT);
     window.pins.render(filterAds);
     window.filterForm.turnOn();
   };
+
 
   // get a container to insert a popup
   var mainContainer = document.querySelector('main');
@@ -110,6 +104,29 @@
     .content
     .querySelector('.error');
 
+  // error callback for get offers from the server
+  var onError = function (errorMessage) {
+    var popupElement = errorPopupTemplate.cloneNode(true);
+
+    // get an error message from the server
+    popupElement.querySelector('.error__message').textContent = errorMessage;
+
+    // find a popup close button and add a close click
+    var errorButton = popupElement.querySelector('.error__button');
+    errorButton.addEventListener('click', function () {
+      window.backend.load(onLoad, onError);
+    });
+
+    // insert a popup to a main container
+    mainContainer.appendChild(popupElement);
+
+    // call the function for adding popup close handlers
+    var errorContainer = mainContainer.querySelector('.error');
+    addListener(errorContainer);
+  };
+
+
+  // send an ad to the server
   var closePopupByKey = function (evt, popup) {
     if (!evt.key === window.const.Key.ESCAPE) {
       return;
@@ -130,6 +147,7 @@
         return;
       }
       successContainer.remove();
+      document.removeEventListener('keydown', onSuccessPopupPress);
     });
 
     // close a popup by an Esc key
@@ -144,22 +162,21 @@
     deactivatePage();
   };
 
-  // error callback for send an offer to the server
-  var onFormError = function () {
-    renderPopup(errorPopupTemplate);
+  // add popup close handlers
+  var addListener = function (popup) {
 
     // close a popup by a click
-    var errorContainer = mainContainer.querySelector('.error');
-    errorContainer.addEventListener('click', function (evt) {
+    popup.addEventListener('click', function (evt) {
       if (!(evt.target.matches('.error') || evt.target.matches('.error__button'))) {
         return;
       }
-      errorContainer.remove();
+      popup.remove();
+      document.removeEventListener('keydown', onErrorPopupPress);
     });
 
     // close a popup by an Esc key
     var onErrorPopupPress = function (evt) {
-      closePopupByKey(evt, errorContainer);
+      closePopupByKey(evt, popup);
       document.removeEventListener('keydown', onErrorPopupPress);
     };
 
@@ -167,10 +184,20 @@
     document.addEventListener('keydown', onErrorPopupPress);
   };
 
+  // error callback for send an offer to the server
+  var onFormError = function () {
+    renderPopup(errorPopupTemplate);
+
+    // call the function for adding popup close handlers
+    var errorContainer = mainContainer.querySelector('.error');
+    addListener(errorContainer);
+  };
+
+
   // create an ad label
   var renderPopup = function (popup) {
-    var popupBlock = popup.cloneNode(true);
-    mainContainer.appendChild(popupBlock);
+    var popupElement = popup.cloneNode(true);
+    mainContainer.appendChild(popupElement);
   };
 
   // send an ad form
@@ -179,6 +206,7 @@
     window.backend.save(new FormData(adForm), onFormSuccess, onFormError);
   });
 
+  // deactivate the page
   var deactivatePage = function () {
     // hide a map with ads
     map.classList.add('map--faded');

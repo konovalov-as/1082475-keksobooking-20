@@ -118,6 +118,7 @@
       card.remove();
     }
     removeActivePin();
+    document.removeEventListener('keydown', onDocumentPress);
   };
 
   // a card closing handler by Esc key
