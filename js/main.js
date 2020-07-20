@@ -1,55 +1,56 @@
 'use strict';
 
 (function () {
-  var adForm = window.adForm.form;
-  var adFormHeader = adForm.querySelector('.ad-form-header');
-  var adFormElements = adForm.querySelectorAll('.ad-form__element');
+  var PinСoordinate = {
+    LEFT: 570,
+    TOP: 375,
+  };
+
+  var adForm = document.querySelector('.ad-form');
   var inputAddress = adForm.querySelector('#address');
 
-  // activates the page
+  // activate the page
   var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
 
-  var isActivePage = true;
+  var isActivePage = false;
+
   var activatePage = function () {
-    // opens a map with ads
+    if (isActivePage) {
+      return;
+    }
+
+    // open a map with ads
     map.classList.remove('map--faded');
 
-    // enable an ad form controls
-    adFormHeader.removeAttribute('disabled');
-    adFormElements.forEach(function (fieldset) {
-      fieldset.removeAttribute('disabled');
-    });
-    // removes an ad form transparency
-    adForm.classList.remove('ad-form--disabled');
-    // sets the read-only attribute of the address field
-    inputAddress.setAttribute('readonly', 'readonly');
+    window.adForm.turnOn();
 
     window.backend.load(onLoad, onError);
-    isActivePage = false;
+
+    window.imageLoad.addEvents();
+
+    isActivePage = true;
+
+    getPinCoordinates(false);
   };
 
-  // activates the page with a click
+  // activate the page by a click
   mainPin.addEventListener('mousedown', function (evt) {
-    if (evt.button === window.const.MOUSE_LEFT_BUTTON) {
-      if (isActivePage) {
-        activatePage();
-      }
-      getPinCoordinates(false);
+    if (!(evt.button === window.const.MOUSE_LEFT_BUTTON)) {
+      return;
     }
+    activatePage();
   });
 
-  // activates the page from the keyboard
+  // activate the page by an Esc key
   mainPin.addEventListener('keydown', function (evt) {
-    if (evt.key === window.const.Key.ENTER) {
-      if (isActivePage) {
-        activatePage();
-      }
-      getPinCoordinates(false);
+    if (!(evt.key === window.const.Key.ENTER)) {
+      return;
     }
+    activatePage();
   });
 
-  // gets label coordinates
+  // get a label coordinates
   var getPinCoordinates = function (isRoundPin) {
     var xLeft = mainPin.style.left;
     var yTop = mainPin.style.top;
@@ -57,8 +58,8 @@
     var x;
     var y;
 
-    x = Math.floor(parseInt(xLeft.substr(0, [xLeft.length - 2]), 10) + halfPin);
-    y = Math.floor(parseInt(yTop.substr(0, [yTop.length - 2]), 10) + halfPin);
+    x = Math.floor(parseInt(xLeft, 10) + halfPin);
+    y = Math.floor(parseInt(yTop, 10) + halfPin);
 
     if (!isRoundPin) {
       y += halfPin + window.const.PinSize.HEIGHT_PIN;
@@ -67,132 +68,181 @@
   };
   getPinCoordinates(true);
 
-  // receives offers from the server
-  var onLoad = function (offers) {
+
+  // gets ads from the server
+  // success callback for get offers from the server
+  var onLoad = function (ads) {
+    var offers = [];
+
+    ads.forEach(function (ad) {
+      if (ad.offer) {
+        offers.push(ad);
+      }
+    });
+
     window.ads = offers;
-    updateAds();
+    updateAds(window.ads);
   };
 
-  var onError = function (errorMessage) {
-    var node = document.createElement('div');
-    node.classList.add('error-message');
-
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
+  // display the first five pins
+  var updateAds = function (ads) {
+    var filterAds = ads.slice(0, window.const.PIN_COUNT);
+    window.pins.render(filterAds);
+    window.filterForm.turnOn();
   };
 
-  // displays the first five pins
-  var PIN_COUNT = window.const.PIN_COUNT;
-  var updateAds = function () {
-    var filterAds = window.ads.slice(0, PIN_COUNT);
-    window.pin.renderPins(filterAds);
-    window.card.onCardOpen(filterAds);
-  };
 
-  // gets a block to insert messages
-  var main = document.querySelector('main');
+  // get a container to insert a popup
+  var mainContainer = document.querySelector('main');
 
-  // gets a success message template
-  var successPopup = document.querySelector('#success')
+  // get a success popup template
+  var successPopupTemplate = document.querySelector('#success')
     .content
     .querySelector('.success');
 
-  // gets a error message template
-  var errorPopup = document.querySelector('#error')
+  // get a error popup template
+  var errorPopupTemplate = document.querySelector('#error')
     .content
     .querySelector('.error');
 
-  var closePopupByKey = function (evt, typePopup) {
+  // error callback for get offers from the server
+  var onError = function (errorMessage) {
+    var popupElement = errorPopupTemplate.cloneNode(true);
+
+    // get an error message from the server
+    popupElement.querySelector('.error__message').textContent = errorMessage;
+
+    // find a popup close button and add a close click
+    var errorButton = popupElement.querySelector('.error__button');
+    errorButton.addEventListener('click', function () {
+      window.backend.load(onLoad, onError);
+    });
+
+    // insert a popup to a main container
+    mainContainer.appendChild(popupElement);
+
+    // call the function for adding popup close handlers
+    var errorContainer = mainContainer.querySelector('.error');
+    addListeners(errorContainer);
+  };
+
+
+  // send an ad to the server
+  var closePopupByKey = function (evt, popup) {
     if (!evt.key === window.const.Key.ESCAPE) {
       return;
     }
-    if (typePopup) {
-      typePopup.remove();
+    if (popup) {
+      popup.remove();
     }
   };
 
-  // successful form submission
-  var onFormUpload = function () {
-    renderMessage(successPopup);
+  // success callback for send an offer to the server
+  var onFormSuccess = function () {
+    renderPopup(successPopupTemplate);
 
-    // success message close handler
-    document.addEventListener('keydown', function (evt) {
-      closePopupByKey(evt, successBlock);
-    });
+    // close a popup by a click
+    var successContainer = mainContainer.querySelector('.success');
+    successContainer.tabIndex = -1;
+    successContainer.focus();
 
-    var successBlock = main.querySelector('.success');
-    successBlock.addEventListener('click', function (evt) {
-      if (evt.target && evt.target.matches('.success')) {
-        successBlock.remove();
+    successContainer.addEventListener('click', function (evt) {
+      if (!evt.target.matches('.success')) {
+        return;
       }
+      successContainer.remove();
+      document.removeEventListener('keydown', onSuccessPopupPress);
     });
+
+    // close a popup by an Esc key
+    var onSuccessPopupPress = function (evt) {
+      closePopupByKey(evt, successContainer);
+      document.removeEventListener('keydown', onSuccessPopupPress);
+    };
+
+    // success popup close handler
+    document.addEventListener('keydown', onSuccessPopupPress);
 
     deactivatePage();
   };
 
-  // error form submission
-  var onFormError = function () {
-    renderMessage(errorPopup);
+  // add popup close handlers
+  var addListeners = function (popup) {
 
-    // error message close handler
-    document.addEventListener('keydown', function (evt) {
-      closePopupByKey(evt, errorBlock);
-    });
-
-    var errorBlock = main.querySelector('.error');
-    errorBlock.addEventListener('click', function (evt) {
-      if (evt.target && evt.target.matches('.error') || evt.target.matches('.error__button')) {
-        errorBlock.parentElement.removeChild(errorBlock);
+    // close a popup by a click
+    popup.addEventListener('click', function (evt) {
+      if (!(evt.target.matches('.error') || evt.target.matches('.error__button'))) {
+        return;
       }
+      popup.remove();
+      document.removeEventListener('keydown', onErrorPopupPress);
     });
+
+    // close a popup by an Esc key
+    var onErrorPopupPress = function (evt) {
+      closePopupByKey(evt, popup);
+      document.removeEventListener('keydown', onErrorPopupPress);
+    };
+
+    // error popup close handler
+    document.addEventListener('keydown', onErrorPopupPress);
   };
 
-  // creates an ad label
-  var renderMessage = function (message) {
-    var messageBlock = message.cloneNode(true);
-    main.appendChild(messageBlock);
+  // error callback for send an offer to the server
+  var onFormError = function () {
+    renderPopup(errorPopupTemplate);
+
+    // call the function for adding popup close handlers
+    var errorContainer = mainContainer.querySelector('.error');
+    addListeners(errorContainer);
   };
 
-  // sends an ad form
+
+  // create an ad label
+  var renderPopup = function (popup) {
+    var popupElement = popup.cloneNode(true);
+    mainContainer.appendChild(popupElement);
+  };
+
+  // send an ad form
   adForm.addEventListener('submit', function (evt) {
     evt.preventDefault();
-    window.backend.save(new FormData(adForm), onFormUpload, onFormError);
+    window.backend.save(new FormData(adForm), onFormSuccess, onFormError);
   });
 
+  // deactivate the page
   var deactivatePage = function () {
-    // closes a map with ads
+    // hide a map with ads
     map.classList.add('map--faded');
 
-    // adds an ad form transparency
-    adForm.classList.add('ad-form--disabled');
+    // disable ad form controls
+    window.adForm.turnOff();
 
-    // disables an ad form controls
-    adFormHeader.setAttribute('disabled', '');
-    adFormElements.forEach(function (fieldset) {
-      fieldset.setAttribute('disabled', '');
-    });
-
-    // disables a filter form controls
-    window.filterForm.turnOffFilter();
+    // disable filter form controls
+    window.filterForm.turnOff();
 
     adForm.reset();
-    inputAddress.value = window.const.PinСoordinate.LEFT + window.const.PinSize.SIDE_LENGTH / 2 + ', ' + (window.const.PinСoordinate.TOP + window.const.PinSize.SIDE_LENGTH / 2);
 
-    mainPin.style.left = window.const.PinСoordinate.LEFT + 'px';
-    mainPin.style.top = window.const.PinСoordinate.TOP + 'px';
+    window.imageLoad.removeEvents();
 
-    window.card.closeCard();
+    inputAddress.value = PinСoordinate.LEFT + window.const.PinSize.SIDE_LENGTH / 2 + ', ' + (PinСoordinate.TOP + window.const.PinSize.SIDE_LENGTH / 2);
 
-    window.pin.deletePins();
+    mainPin.style.left = PinСoordinate.LEFT + window.const.CSS_UNITS;
+    mainPin.style.top = PinСoordinate.TOP + window.const.CSS_UNITS;
 
-    isActivePage = true;
+    window.card.close();
+
+    window.pins.remove();
+
+    isActivePage = false;
 
     window.adForm.validateRoom();
   };
 
-  // resets an ad form
+  // reset an ad form
   var resetButton = adForm.querySelector('.ad-form__reset');
-  resetButton.addEventListener('click', function () {
+  resetButton.addEventListener('click', function (evt) {
+    evt.preventDefault();
     deactivatePage();
   });
 

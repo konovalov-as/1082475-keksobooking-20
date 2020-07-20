@@ -1250,13 +1250,13 @@ fieldset {
   display: none;
 }
 
-.error-message {
-  position: absolute;
-  font-size: 36px;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  padding: 30px 10px;
-  text-align: center;
-  background-color: darkorange;
+.housing-photo {
+  width: 100%;
+  height: auto;
+}
+
+.ad-form input:invalid,
+.ad-form select:invalid {
+  -webkit-box-shadow: 0px 0px 3px 1px red;
+          box-shadow: 0px 0px 3px 1px red;
 }
