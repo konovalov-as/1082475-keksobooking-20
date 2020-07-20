@@ -142,6 +142,9 @@
 
     // close a popup by a click
     var successContainer = mainContainer.querySelector('.success');
+    successContainer.tabIndex = -1;
+    successContainer.focus();
+
     successContainer.addEventListener('click', function (evt) {
       if (!evt.target.matches('.success')) {
         return;
@@ -226,7 +229,7 @@
     mainPin.style.left = PinСoordinate.LEFT + window.const.CSS_UNITS;
     mainPin.style.top = PinСoordinate.TOP + window.const.CSS_UNITS;
 
-    window.card.onCardCloseClick();
+    window.card.close();
 
     window.pins.remove();
 
@@ -237,7 +240,8 @@
 
   // reset an ad form
   var resetButton = adForm.querySelector('.ad-form__reset');
-  resetButton.addEventListener('click', function () {
+  resetButton.addEventListener('click', function (evt) {
+    evt.preventDefault();
     deactivatePage();
   });
 

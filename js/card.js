@@ -154,33 +154,24 @@
 
   // open an ad card
   var onMapClick = function (evt) {
-    // select only pins
+    // return if target isn't a pin
     if (!(evt.target.matches('.map__pin:not(.map__pin--main)') || evt.target.matches('.map__pin:not(.map__pin--main) img'))) {
       return;
     }
 
-    // get an ad title and set an active pin
-    var adTitle;
-    var activePin;
+    // get active pin
+    var activePin = evt.target.closest('.map__pin:not(.map__pin--main)');
+    // get an ad title
+    var adTitle = activePin.children[0].alt;
 
-    // if target is a button
-    if (evt.target.matches('.map__pin:not(.map__pin--main)')) {
-      adTitle = evt.target.children[0].alt;
-      activePin = evt.target;
-    }
-    // if target is a image
-    if (evt.target.matches('.map__pin:not(.map__pin--main) img')) {
-      adTitle = evt.target.alt;
-      activePin = evt.target.parentElement;
-    }
-
-    // get an ad and render an ad
+    // get an ad by an ad title
     var offer = window.ads.find(function (ad) {
       return ad.offer.title === adTitle;
     });
 
     onCardCloseClick();
     activePin.classList.add('map__pin--active');
+    // render an ad card
     renderCard(offer);
   };
 
@@ -190,7 +181,7 @@
 
 
   window.card = {
-    onCardCloseClick: onCardCloseClick,
+    close: onCardCloseClick,
   };
 
 })();

@@ -71,7 +71,7 @@
 
   var filterHousingPrice = function (price) {
     var priceCategory = housingPriceSelect.value;
-    priceCategoryToValueMap[priceCategory](price);
+    // priceCategoryToValueMap[priceCategory](price);
     return priceCategoryToValueMap[priceCategory](price);
   };
 
@@ -115,7 +115,7 @@
       }
     }
 
-    window.card.onCardCloseClick();
+    window.card.close();
     window.pins.remove();
 
     window.pins.render(filterAds);

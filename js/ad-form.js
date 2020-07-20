@@ -28,7 +28,7 @@
   var selectCapacity = adForm.querySelector('#capacity');
 
   // turn on ad form controls
-  var turnOnAd = function () {
+  var turnOnForm = function () {
     adFormFieldsets.forEach(function (fieldset) {
       fieldset.disabled = false;
     });
@@ -42,7 +42,7 @@
   };
 
   // turn off ad form controls
-  var turnOffAd = function () {
+  var turnOffForm = function () {
     adFormFieldsets.forEach(function (fieldset) {
       fieldset.disabled = true;
     });
@@ -51,7 +51,7 @@
     // add an ad form transparency
     adForm.classList.add('ad-form--disabled');
   };
-  turnOffAd();
+  turnOffForm();
 
   // fields validation
   // header an ad
@@ -198,8 +198,8 @@
 
   window.adForm = {
     validateRoom: validateRoom,
-    turnOff: turnOffAd,
-    turnOn: turnOnAd,
+    turnOff: turnOffForm,
+    turnOn: turnOnForm,
   };
 
 })();

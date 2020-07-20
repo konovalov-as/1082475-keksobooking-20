@@ -25,33 +25,37 @@
   var onUserAvatarChange = function () {
     var file = userAvatar.files[0];
 
-    if (isPicture(file)) {
-      var reader = new FileReader();
-
-      reader.addEventListener('load', function () {
-        userAvatarPreview.src = reader.result;
-      });
-
-      reader.readAsDataURL(file);
+    if (!(isPicture(file))) {
+      return;
     }
+
+    var reader = new FileReader();
+
+    reader.addEventListener('load', function () {
+      userAvatarPreview.src = reader.result;
+    });
+
+    reader.readAsDataURL(file);
   };
 
   // handler of load a housing photo
   var onHousingPhotoChange = function () {
     var file = housingPhoto.files[0];
 
-    if (isPicture(file)) {
-      var reader = new FileReader();
-
-      reader.addEventListener('load', function () {
-        var node = document.createElement('img');
-        node.classList.add('housing-photo');
-        node.src = reader.result;
-        housingPhotoPreview.appendChild(node);
-      });
-
-      reader.readAsDataURL(file);
+    if (!(isPicture(file))) {
+      return;
     }
+
+    var reader = new FileReader();
+
+    reader.addEventListener('load', function () {
+      var node = document.createElement('img');
+      node.classList.add('housing-photo');
+      node.src = reader.result;
+      housingPhotoPreview.appendChild(node);
+    });
+
+    reader.readAsDataURL(file);
   };
 
   var addEvents = function () {
