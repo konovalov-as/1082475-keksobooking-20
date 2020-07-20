@@ -112,7 +112,7 @@
   };
 
   // a card closing handler by click
-  var onCardCloseClick = function () {
+  var closeCard = function () {
     var card = document.querySelector('.map .map__card');
     if (card) {
       card.remove();
@@ -124,7 +124,7 @@
   // a card closing handler by Esc key
   var onDocumentPress = function (evt) {
     if (evt.key === window.const.Key.ESCAPE) {
-      onCardCloseClick();
+      closeCard();
       document.removeEventListener('keydown', onDocumentPress);
     }
   };
@@ -134,7 +134,9 @@
     var cardCloseButton = cardElement.querySelector('.map__card .popup__close');
 
     // add a mouse click handler
-    cardCloseButton.addEventListener('click', onCardCloseClick);
+    cardCloseButton.addEventListener('click', function () {
+      closeCard();
+    });
 
     // add an Esc key handler
     document.addEventListener('keydown', onDocumentPress);
@@ -169,7 +171,7 @@
       return ad.offer.title === adTitle;
     });
 
-    onCardCloseClick();
+    closeCard();
     activePin.classList.add('map__pin--active');
     // render an ad card
     renderCard(offer);
@@ -181,7 +183,7 @@
 
 
   window.card = {
-    close: onCardCloseClick,
+    close: closeCard,
   };
 
 })();

@@ -14,7 +14,12 @@
   var mainPin = document.querySelector('.map__pin--main');
 
   var isActivePage = false;
+
   var activatePage = function () {
+    if (isActivePage) {
+      return;
+    }
+
     // open a map with ads
     map.classList.remove('map--faded');
 
@@ -25,6 +30,8 @@
     window.imageLoad.addEvents();
 
     isActivePage = true;
+
+    getPinCoordinates(false);
   };
 
   // activate the page by a click
@@ -32,10 +39,7 @@
     if (!(evt.button === window.const.MOUSE_LEFT_BUTTON)) {
       return;
     }
-    if (!isActivePage) {
-      activatePage();
-    }
-    getPinCoordinates(false);
+    activatePage();
   });
 
   // activate the page by an Esc key
@@ -43,10 +47,7 @@
     if (!(evt.key === window.const.Key.ENTER)) {
       return;
     }
-    if (!isActivePage) {
-      activatePage();
-    }
-    getPinCoordinates(false);
+    activatePage();
   });
 
   // get a label coordinates
