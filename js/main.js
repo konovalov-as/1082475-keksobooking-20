@@ -123,7 +123,7 @@
 
     // call the function for adding popup close handlers
     var errorContainer = mainContainer.querySelector('.error');
-    addListener(errorContainer);
+    addListeners(errorContainer);
   };
 
 
@@ -167,7 +167,7 @@
   };
 
   // add popup close handlers
-  var addListener = function (popup) {
+  var addListeners = function (popup) {
 
     // close a popup by a click
     popup.addEventListener('click', function (evt) {
@@ -194,7 +194,7 @@
 
     // call the function for adding popup close handlers
     var errorContainer = mainContainer.querySelector('.error');
-    addListener(errorContainer);
+    addListeners(errorContainer);
   };
 
 

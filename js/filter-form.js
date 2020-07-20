@@ -22,7 +22,7 @@
 
   // a filter change handler
   var onFilterChange = function () {
-    window.debounce(setFilterAds);
+    window.debounce(setFiltersAds);
   };
 
   // turn on filter form controls
@@ -71,7 +71,6 @@
 
   var filterHousingPrice = function (price) {
     var priceCategory = housingPriceSelect.value;
-    // priceCategoryToValueMap[priceCategory](price);
     return priceCategoryToValueMap[priceCategory](price);
   };
 
@@ -97,7 +96,7 @@
     });
   };
 
-  var setFilterAds = function () {
+  var setFiltersAds = function () {
     var ads = window.ads;
     var filterAds = [];
 
