@@ -111,11 +111,11 @@
     return cardElement;
   };
 
-  // a card closing handler by click
+  // a card closing handler
+  var openCard;
   var closeCard = function () {
-    var card = document.querySelector('.map .map__card');
-    if (card) {
-      card.remove();
+    if (openCard) {
+      openCard.remove();
     }
     removeActivePin();
     document.removeEventListener('keydown', onDocumentPress);
@@ -144,7 +144,8 @@
 
   // display an ad card
   var renderCard = function (ad) {
-    map.insertBefore(createCard(ad), filtersContainer);
+    openCard = createCard(ad);
+    map.insertBefore(openCard, filtersContainer);
   };
 
   var removeActivePin = function () {
