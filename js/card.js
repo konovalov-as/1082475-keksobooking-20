@@ -112,10 +112,10 @@
   };
 
   // a card closing handler
-  var openCard;
+  var openedCard;
   var closeCard = function () {
-    if (openCard) {
-      openCard.remove();
+    if (openedCard) {
+      openedCard.remove();
     }
     removeActivePin();
     document.removeEventListener('keydown', onDocumentPress);
@@ -144,8 +144,8 @@
 
   // display an ad card
   var renderCard = function (ad) {
-    openCard = createCard(ad);
-    map.insertBefore(openCard, filtersContainer);
+    openedCard = createCard(ad);
+    map.insertBefore(openedCard, filtersContainer);
   };
 
   var removeActivePin = function () {
